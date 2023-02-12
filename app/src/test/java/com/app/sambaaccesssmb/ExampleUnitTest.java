@@ -2,10 +2,9 @@ package com.app.sambaaccesssmb;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.Test;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -42,7 +41,7 @@ public class ExampleUnitTest {
     }
 
     @Test
-    public void printStars(){
+    public void printStars() {
 
         for (int i = 1; i <= 5; i++) {
             for (int j = 0; j < i; j++) {
@@ -52,7 +51,7 @@ public class ExampleUnitTest {
         }
 
         for (int i = 5; i >= 1; i--) {
-            for (int j = i; j >0; j--) {
+            for (int j = i; j > 0; j--) {
                 System.out.print("*");
             }
             System.out.println();

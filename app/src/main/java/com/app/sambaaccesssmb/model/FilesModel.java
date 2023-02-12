@@ -24,6 +24,4 @@ public class FilesModel {
     public void setDirectory(boolean directory) {
         isDirectory = directory;
     }
-
-
 }
