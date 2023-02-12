@@ -1,7 +1,6 @@
 package com.app.sambaaccesssmb;
 
 import android.app.Application;
-
 import timber.log.Timber;
 
 public class SMBAccess extends Application {

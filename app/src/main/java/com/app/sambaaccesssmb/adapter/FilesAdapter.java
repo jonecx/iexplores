@@ -6,15 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
+import com.app.sambaaccesssmb.R;
 import com.app.sambaaccesssmb.interfaces.FilesClickListener;
 import com.app.sambaaccesssmb.model.FilesModel;
-import com.app.sambaaccesssmb.R;
 import com.app.sambaaccesssmb.utils.Utils;
-
 import java.util.List;
 
 public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.ViewHolder> {
@@ -22,7 +19,8 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.ViewHolder> 
     private final Context context;
     private final FilesClickListener filesClickListener;
 
-    public FilesAdapter(Context context, List<FilesModel> filesList, FilesClickListener filesClickListener) {
+    public FilesAdapter(
+            Context context, List<FilesModel> filesList, FilesClickListener filesClickListener) {
         this.context = context;
         this.filesList = filesList;
         this.filesClickListener = filesClickListener;

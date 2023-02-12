@@ -9,10 +9,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.app.sambaaccesssmb.R;
 import com.app.sambaaccesssmb.adapter.FilesAdapter;
 import com.app.sambaaccesssmb.connection.SMBConnection;
@@ -21,7 +19,6 @@ import com.app.sambaaccesssmb.interfaces.FilesClickListener;
 import com.app.sambaaccesssmb.interfaces.ReceiveCallback;
 import com.app.sambaaccesssmb.model.FilesModel;
 import com.app.sambaaccesssmb.utils.Utils;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -30,11 +27,11 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import jcifs.smb.SmbException;
 import jcifs.smb.SmbFile;
 
-public class MainActivity extends AppCompatActivity implements FilesClickListener, View.OnClickListener {
+public class MainActivity extends AppCompatActivity
+        implements FilesClickListener, View.OnClickListener {
     final int PICK_FILE_REQUEST_CODE = 159;
     private final String TAG = this.getClass().getSimpleName();
     SMBConnection smbConnection = SMBConnection.getInstance();
@@ -59,49 +56,59 @@ public class MainActivity extends AppCompatActivity implements FilesClickListene
         } catch (SmbException e) {
             e.printStackTrace();
         }
-
-
     }
 
     private void setupAdapter() throws SmbException {
-        smbConnection.setReceiveCallback(new ReceiveCallback() {
-            @Override
-            public void onReceiveCallback(Bundle data) {
-                //No use of that callback here.
-            }
+        smbConnection.setReceiveCallback(
+                new ReceiveCallback() {
+                    @Override
+                    public void onReceiveCallback(Bundle data) {
+                        // No use of that callback here.
+                    }
 
-            @SuppressLint("NotifyDataSetChanged")
-            @Override
-            public void onReceiveFilesData(List<SmbFile> updatedFileList) {
-                new Handler(Looper.getMainLooper()).post(() -> {
-                    Collections.sort(updatedFileList, (t1, t2) -> {
-                        try {
-                            return Long.compare(t1.createTime(), t2.createTime());
-                        } catch (SmbException e) {
-                            e.printStackTrace();
-                        }
-                        return 0;
-                    });
-                    synchronized (MainActivity.this) {
-                        if (smbFileList != updatedFileList) {
-                            smbFileList.clear();
-                            fileList.clear();
-                            smbFileList.addAll(updatedFileList);
-                            for (SmbFile file :
-                                    smbFileList) {
-                                try {
-                                    fileList.add(new FilesModel(file.getName(), file.isDirectory()));
-                                } catch (SmbException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                            filesAdapter.notifyDataSetChanged();
-                        }
-                        binding.txtNoFilesFound.setVisibility(fileList.isEmpty() ? View.VISIBLE : View.GONE);
+                    @SuppressLint("NotifyDataSetChanged")
+                    @Override
+                    public void onReceiveFilesData(List<SmbFile> updatedFileList) {
+                        new Handler(Looper.getMainLooper())
+                                .post(
+                                        () -> {
+                                            Collections.sort(
+                                                    updatedFileList,
+                                                    (t1, t2) -> {
+                                                        try {
+                                                            return Long.compare(
+                                                                    t1.createTime(),
+                                                                    t2.createTime());
+                                                        } catch (SmbException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                        return 0;
+                                                    });
+                                            synchronized (MainActivity.this) {
+                                                if (smbFileList != updatedFileList) {
+                                                    smbFileList.clear();
+                                                    fileList.clear();
+                                                    smbFileList.addAll(updatedFileList);
+                                                    for (SmbFile file : smbFileList) {
+                                                        try {
+                                                            fileList.add(
+                                                                    new FilesModel(
+                                                                            file.getName(),
+                                                                            file.isDirectory()));
+                                                        } catch (SmbException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                    }
+                                                    filesAdapter.notifyDataSetChanged();
+                                                }
+                                                binding.txtNoFilesFound.setVisibility(
+                                                        fileList.isEmpty()
+                                                                ? View.VISIBLE
+                                                                : View.GONE);
+                                            }
+                                        });
                     }
                 });
-            }
-        });
         smbConnection.getAllFiles();
     }
 
@@ -111,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements FilesClickListene
             binding.txtTitle.setText(fileList.get(position).getName());
             smbConnection.getAllFiles(smbFileList.get(position));
             backstackQueue.add(smbFileList.get(position));
-        }else{
+        } else {
             smbConnection.downloadFile(smbFileList.get(position));
         }
     }
@@ -171,7 +178,11 @@ public class MainActivity extends AppCompatActivity implements FilesClickListene
                 Uri uri = null;
                 try {
                     uri = data.getData();
-                    getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                    getContentResolver()
+                            .takePersistableUriPermission(
+                                    uri,
+                                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                            | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                 } catch (Exception exception) {
                     exception.printStackTrace();
                 }
@@ -192,9 +203,13 @@ public class MainActivity extends AppCompatActivity implements FilesClickListene
                     }
 
                     if (file != null) {
-                        Log.d(TAG, "onActivityResult: source: " + file + ", isExist: " + file.exists());
-                        if (file.exists())
-                            smbConnection.uploadFile(file);
+                        Log.d(
+                                TAG,
+                                "onActivityResult: source: "
+                                        + file
+                                        + ", isExist: "
+                                        + file.exists());
+                        if (file.exists()) smbConnection.uploadFile(file);
                     }
 
                 } catch (IOException e) {
@@ -203,6 +218,4 @@ public class MainActivity extends AppCompatActivity implements FilesClickListene
             }
         }
     }
-
-
 }
