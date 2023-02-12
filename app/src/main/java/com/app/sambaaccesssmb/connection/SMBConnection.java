@@ -1,14 +1,11 @@
 package com.app.sambaaccesssmb.connection;
 
-import static java.security.AccessController.getContext;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.webkit.MimeTypeMap;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
@@ -22,10 +19,17 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
-import jcifs.smb.NtlmPasswordAuthentication;
+import jcifs.CIFSContext;
+import jcifs.CIFSException;
+import jcifs.Configuration;
+import jcifs.config.PropertyConfiguration;
+import jcifs.context.BaseContext;
+import jcifs.smb.NtlmPasswordAuthenticator;
 import jcifs.smb.SmbException;
 import jcifs.smb.SmbFile;
 import jcifs.smb.SmbFileInputStream;
@@ -51,11 +55,7 @@ public class SMBConnection {
                     Thread.sleep(500);
                 }
             } catch (SmbException | InterruptedException e) {
-                e.printStackTrace();
-                Bundle bundle = new Bundle();
-                bundle.putBoolean("is_success", false);
-                bundle.putString("reason", e.getMessage());
-                receiveCallback.onReceiveCallback(bundle);
+                handleError(e.getLocalizedMessage());
             }
         }
     };
@@ -77,6 +77,12 @@ public class SMBConnection {
         return isConnectionStabled;
     }
 
+    private void handleError(String errorMessage) {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("is_success", false);
+        bundle.putString("reason", errorMessage);
+        receiveCallback.onReceiveCallback(bundle);
+    }
     @NonNull
     @Override
     protected Object clone() throws CloneNotSupportedException {
@@ -88,20 +94,26 @@ public class SMBConnection {
     }
 
     public void initiateConnection(String serverAddress, String userName, String password) {
+
         Thread thread = new Thread(() -> {
-            NtlmPasswordAuthentication auth = new NtlmPasswordAuthentication(null, userName, password);
+
+            Properties jcifsProperties = new Properties();
+            jcifsProperties.setProperty("jcifs.smb.client.enableSMB2", "true");
+            jcifsProperties.setProperty("jcifs.smb.client.dfs.disabled", "true");
             Bundle bundle = new Bundle();
+
             try {
-                rootSMBFile = new SmbFile(serverAddress, auth);
+                Configuration config = new PropertyConfiguration(jcifsProperties);
+                BaseContext baseCxt = new BaseContext(config);
+                NtlmPasswordAuthenticator ntlmPasswordAuthenticator = new NtlmPasswordAuthenticator(serverAddress, userName, password);
+                CIFSContext auth = baseCxt.withCredentials(ntlmPasswordAuthenticator);
+                rootSMBFile = new SmbFile(serverAddress, (CIFSContext) auth);
                 rootSMBFile.connect();
                 bundle.putBoolean("is_success", true);
-            } catch (Exception e) {
-                bundle.putBoolean("is_success", false);
-                bundle.putString("reason", e.getMessage());
-            }
-            isConnectionStabled = true;
-            if (receiveCallback != null) {
+                isConnectionStabled = true;
                 receiveCallback.onReceiveCallback(bundle);
+            } catch (IOException e) {
+                handleError(e.getLocalizedMessage());
             }
         });
         thread.setName("smb-connection");
