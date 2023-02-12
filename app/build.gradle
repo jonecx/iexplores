@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'com.google.dagger.hilt.android'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -45,4 +47,10 @@ dependencies {
     implementation group: 'org.slf4j', name: 'slf4j-simple', version: '2.0.6'
     implementation 'org.bouncycastle:bcpkix-jdk15on:1.70'
     implementation 'com.jakewharton.timber:timber:4.7.1'
+    implementation "com.google.dagger:hilt-android:2.44"
+    kapt "com.google.dagger:hilt-android-compiler:2.44"
+}
+
+kapt {
+    correctErrorTypes = true
 }
