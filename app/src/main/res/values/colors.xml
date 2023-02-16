@@ -18,4 +18,7 @@
 
     <color name="color_transparent">#90000000</color>
 
+    <color name="blue_01">#233943</color>
+    <color name="blue_02">#2D4956</color>
+
 </resources>
