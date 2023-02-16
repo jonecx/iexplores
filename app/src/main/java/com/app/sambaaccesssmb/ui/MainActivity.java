@@ -19,6 +19,7 @@ import com.app.sambaaccesssmb.interfaces.FilesClickListener;
 import com.app.sambaaccesssmb.interfaces.ReceiveCallback;
 import com.app.sambaaccesssmb.model.FilesModel;
 import com.app.sambaaccesssmb.utils.Utils;
+import dagger.hilt.android.AndroidEntryPoint;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -30,6 +31,7 @@ import java.util.List;
 import jcifs.smb.SmbException;
 import jcifs.smb.SmbFile;
 
+@AndroidEntryPoint
 public class MainActivity extends AppCompatActivity
         implements FilesClickListener, View.OnClickListener {
     final int PICK_FILE_REQUEST_CODE = 159;
