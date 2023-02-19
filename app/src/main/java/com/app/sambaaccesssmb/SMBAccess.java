@@ -1,8 +1,10 @@
 package com.app.sambaaccesssmb;
 
 import android.app.Application;
+import dagger.hilt.android.HiltAndroidApp;
 import timber.log.Timber;
 
+@HiltAndroidApp
 public class SMBAccess extends Application {
     private static SMBAccess instance = null;
 

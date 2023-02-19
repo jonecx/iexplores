@@ -18,4 +18,6 @@
 
     <color name="color_transparent">#90000000</color>
 
+    <color name="statusBar">@color/white_01</color>
+    <color name="windowBackground">@color/white_02</color>
 </resources>

@@ -13,4 +13,26 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="Dark.Theme.Smb" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="PlatformAdjusted.Theme.Smb" parent="Dark.Theme.Smb" />
+
+    <style name="Theme.Smb" parent="PlatformAdjusted.Theme.Smb">
+        <item name="android:statusBarColor">@color/statusBar</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="23">@bool/is_system_bar_light</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">@bool/is_system_bar_light
+        </item>
+    </style>
+
+    <style name="Nocturnal.Theme.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/windowBackground</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="23">@bool/is_system_bar_light</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">@bool/is_system_bar_light</item>
+    </style>
+
+    <style name="Theme.Smb.Splash" parent="Nocturnal.Theme.Splash">
+        <item name="postSplashScreenTheme">@style/Theme.Smb</item>
+    </style>
+
 </resources>
