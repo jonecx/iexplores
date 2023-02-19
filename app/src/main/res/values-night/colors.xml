@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="statusBar">@color/black_01</color>
+    <color name="windowBackground">@color/black_02</color>
+</resources>

@@ -9,4 +9,7 @@
     <string name="login">Login</string>
     <string name="login_success">Login successful</string>
     <string name="no_files_found">No files found</string>
+
+    <string name="no_servers_added">Such empty :(</string>
+    <string name="add_servers">Add file servers</string>
 </resources>
