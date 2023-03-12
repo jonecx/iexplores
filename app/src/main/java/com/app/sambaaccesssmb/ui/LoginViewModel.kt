@@ -1,47 +1,42 @@
 package com.app.sambaaccesssmb.ui
 
 import androidx.lifecycle.ViewModel
-import com.app.sambaaccesssmb.ui.LoginViewModel.LoginState.Error
-import com.app.sambaaccesssmb.ui.LoginViewModel.LoginState.Success
+import androidx.lifecycle.viewModelScope
+import com.app.sambaaccesssmb.ui.LoginViewModel.LoginState.Initial
+import com.app.sambaaccesssmb.ui.LoginViewModel.LoginState.Loading
 import dagger.hilt.android.lifecycle.HiltViewModel
-import jcifs.CIFSContext
-import jcifs.config.PropertyConfiguration
-import jcifs.context.BaseContext
-import jcifs.smb.NtlmPasswordAuthenticator
 import jcifs.smb.SmbFile
-import java.util.Properties
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor() : ViewModel() {
+class LoginViewModel @Inject constructor(private val loginUsecase: LoginUsecase) : ViewModel() {
 
-    private val enableSMB2Property = "jcifs.smb.client.enableSMB2"
-    private val distributedFileSystemProperty = "jcifs.smb.client.dfs.disabled"
+    private val _loginUser = MutableStateFlow<LoginState>(Initial)
 
-    private lateinit var rootSMBFile: SmbFile
+    val loginUiState: StateFlow<LoginState> = _loginUser
 
-    fun login(serverAddress: String, username: String, password: String) {
-        runCatching {
-            val jcifsProperties = Properties().apply {
-                setProperty(enableSMB2Property, true.toString())
-                setProperty(distributedFileSystemProperty, false.toString())
-            }
-
-            val config = PropertyConfiguration(jcifsProperties)
-            val baseContext = BaseContext(config)
-            val ntlmPasswordAuthenticator = NtlmPasswordAuthenticator(serverAddress, username, password)
-            val cifsContext: CIFSContext = baseContext.withCredentials(ntlmPasswordAuthenticator)
-            rootSMBFile = SmbFile(serverAddress, cifsContext)
-            rootSMBFile.connect()
-        }.onSuccess {
-            Success(rootSMBFile)
-        }.onFailure {
-            Error(it)
+    fun doLogin(serverAddress: String, username: String, password: String) {
+        viewModelScope.launch {
+            loginUsecase.login(serverAddress, username, password)
+                .stateIn(
+                    viewModelScope,
+                    SharingStarted.WhileSubscribed(5_000),
+                    initialValue = Loading
+                )
+                .collect {
+                    _loginUser.value = it
+                }
         }
     }
 
     sealed class LoginState {
         object Loading : LoginState()
+        object Initial : LoginState()
         data class Success(val smbFile: SmbFile) : LoginState()
         data class Error(val exception: Throwable) : LoginState()
     }

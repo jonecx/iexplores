@@ -12,4 +12,10 @@
 
     <string name="no_servers_added">Such empty :(</string>
     <string name="add_servers">Add file servers</string>
+    <string name="sign_in">Sign In</string>
+    <string name="keep_me_signed_in">Keep me signed in</string>
+    <string name="server_address">smb://0.0.0.0</string>
+    <string name="please_wait_signing_in">Just a second. Signing you in.</string>
+    <string name="signing_in_in_progress">Signing in&#8230;</string>
+    <string name="login_failure">Login failed</string>
 </resources>
