@@ -1,4 +1,4 @@
-package com.app.sambaaccesssmb.ui
+package com.app.sambaaccesssmb
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -7,6 +7,7 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import com.app.sambaaccesssmb.ui.SmbApp
 import dagger.hilt.android.AndroidEntryPoint
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)

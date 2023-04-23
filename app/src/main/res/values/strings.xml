@@ -18,4 +18,8 @@
     <string name="please_wait_signing_in">Just a second. Signing you in.</string>
     <string name="signing_in_in_progress">Signing in&#8230;</string>
     <string name="login_failure">Login failed</string>
+    <string name="unknown_error">Hmm&#8230; that didn\'t go well</string>
+    <string name="invalid_username_error">Username cannot be empty.</string>
+    <string name="invalid_server_address_error">The address has to be an IP address</string>
+    <string name="invalid_password_error">Password cannot be empty.</string>
 </resources>

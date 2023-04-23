@@ -1,4 +1,4 @@
-package com.app.sambaaccesssmb.ui
+package com.app.sambaaccesssmb.ui.feature
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,9 +9,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -26,31 +29,22 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.app.sambaaccesssmb.R
+import com.app.sambaaccesssmb.R.string
+import com.app.sambaaccesssmb.ui.IndeterminateProgressWheel
+import com.app.sambaaccesssmb.ui.LoginViewModel.LoginInputValidationKey
+import com.app.sambaaccesssmb.ui.LoginViewModel.LoginInputValidationKey.GeneralErrorKey
+import com.app.sambaaccesssmb.ui.LoginViewModel.LoginInputValidationKey.PasswordKey
+import com.app.sambaaccesssmb.ui.LoginViewModel.LoginInputValidationKey.ServerAddressKey
+import com.app.sambaaccesssmb.ui.LoginViewModel.LoginInputValidationKey.UsernameKey
 import com.app.sambaaccesssmb.ui.LoginViewModel.LoginState
 import com.app.sambaaccesssmb.ui.LoginViewModel.LoginState.Error
-import com.app.sambaaccesssmb.ui.LoginViewModel.LoginState.Initial
-import com.app.sambaaccesssmb.ui.LoginViewModel.LoginState.Loading
-import com.app.sambaaccesssmb.ui.LoginViewModel.LoginState.Success
 import com.app.sambaaccesssmb.ui.design.SmbTheme
 import com.app.sambaaccesssmb.ui.design.ThemePreviews
 
-@Composable
-fun LoginScreen(viewModel: LoginViewModel = hiltViewModel()) {
-    val loginState = viewModel.loginUiState.collectAsStateWithLifecycle()
-    when (loginState.value) {
-        Initial -> EnterCredentialScreen(viewModel::doLogin)
-        Loading -> LoginInProgress()
-        is Success -> Column { Text(text = stringResource(id = R.string.login_success)) }
-        is Error -> EnterCredentialScreen(viewModel::doLogin, loginState.value)
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EnterCredentialScreen(login: (String, String, String) -> Unit, error: LoginState? = null) {
+fun EnterCredentialScreen(login: (String, String, String) -> Unit, loginState: LoginState? = null) {
     Column(
         modifier = Modifier
             .fillMaxHeight()
@@ -63,7 +57,7 @@ fun EnterCredentialScreen(login: (String, String, String) -> Unit, error: LoginS
         val password = rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue()) }
         val keepSignIn = rememberSaveable { mutableStateOf(false) }
 
-        error?.let {
+        if (isError(loginState)) {
             Text(text = stringResource(id = R.string.login_failure), color = MaterialTheme.colorScheme.error)
         }
 
@@ -71,14 +65,20 @@ fun EnterCredentialScreen(login: (String, String, String) -> Unit, error: LoginS
             label = { Text(stringResource(id = R.string.server_address)) },
             value = smbAddress.value,
             onValueChange = { smbAddress.value = it },
-            singleLine = true
+            singleLine = true,
+            isError = isError(loginState, ServerAddressKey),
+            supportingText = { SupportingText(loginState = loginState, ServerAddressKey) },
+            trailingIcon = { TrailingIcon(loginState = loginState, ServerAddressKey) }
         )
         Spacer(modifier = Modifier.padding(8.dp))
         OutlinedTextField(
             label = { Text(stringResource(id = R.string.username)) },
             value = username.value,
             onValueChange = { username.value = it },
-            singleLine = true
+            singleLine = true,
+            isError = isError(loginState, UsernameKey),
+            supportingText = { SupportingText(loginState = loginState, UsernameKey) },
+            trailingIcon = { TrailingIcon(loginState = loginState, UsernameKey) }
         )
         Spacer(modifier = Modifier.padding(8.dp))
         OutlinedTextField(
@@ -86,6 +86,9 @@ fun EnterCredentialScreen(login: (String, String, String) -> Unit, error: LoginS
             value = password.value,
             onValueChange = { password.value = it },
             singleLine = true,
+            isError = isError(loginState, PasswordKey),
+            supportingText = { SupportingText(loginState = loginState, PasswordKey) },
+            trailingIcon = { TrailingIcon(loginState = loginState, PasswordKey) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             visualTransformation = PasswordVisualTransformation()
         )
@@ -107,19 +110,50 @@ fun EnterCredentialScreen(login: (String, String, String) -> Unit, error: LoginS
 }
 
 @Composable
-fun LoginInProgress() {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        IndeterminateProgressWheel(contentDesc = stringResource(id = R.string.please_wait_signing_in))
-        Text(stringResource(id = R.string.signing_in_in_progress))
+private fun getErrorString(validationKey: LoginInputValidationKey): String {
+    return stringResource(
+        id = when (validationKey) {
+            ServerAddressKey -> R.string.invalid_server_address_error
+            UsernameKey -> R.string.invalid_username_error
+            PasswordKey -> R.string.invalid_password_error
+            GeneralErrorKey -> R.string.unknown_error
+        }
+    )
+}
+
+@Composable
+private fun SupportingText(loginState: LoginState?, validationKey: LoginInputValidationKey = GeneralErrorKey) {
+    if (isError(loginState, validationKey)) {
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = getErrorString(validationKey = validationKey),
+            color = MaterialTheme.colorScheme.error
+        )
     }
 }
 
-@ThemePreviews
-@Preview("Login screen")
 @Composable
-fun LoginScreenPreview() {
-    SmbTheme {
-        LoginScreen()
+private fun TrailingIcon(loginState: LoginState?, validationKey: LoginInputValidationKey = GeneralErrorKey) {
+    if (isError(loginState, validationKey)) {
+        Icon(
+            Icons.Filled.Error,
+            getErrorString(validationKey = validationKey),
+            tint = MaterialTheme.colorScheme.error
+        )
+    }
+}
+
+private fun isError(loginState: LoginState?, validationKey: LoginInputValidationKey = GeneralErrorKey): Boolean {
+    return loginState?.let {
+        loginState is Error && loginState.validationKey == validationKey
+    } ?: false
+}
+
+@Composable
+fun LoginInProgress() {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        IndeterminateProgressWheel(contentDesc = stringResource(id = string.please_wait_signing_in))
+        Text(stringResource(id = R.string.signing_in_in_progress))
     }
 }
 

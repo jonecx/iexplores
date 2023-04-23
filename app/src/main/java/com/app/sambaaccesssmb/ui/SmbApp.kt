@@ -24,7 +24,10 @@ import com.app.sambaaccesssmb.ui.design.SmbTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun SmbApp(calculateWindowSizeClass: WindowSizeClass) {
+fun SmbApp(
+    windowSizeClass: WindowSizeClass,
+    smbAppState: SmbAppState = rememberSmbAppState(windowSizeClass = windowSizeClass)
+) {
     SmbTheme {
         Scaffold(
             floatingActionButton = {
@@ -44,7 +47,7 @@ fun SmbApp(calculateWindowSizeClass: WindowSizeClass) {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                LoginScreen()
+                SmbNavHost(navController = smbAppState.navController)
             }
         }
     }

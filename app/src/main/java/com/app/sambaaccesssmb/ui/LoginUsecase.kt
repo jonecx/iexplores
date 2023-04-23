@@ -27,27 +27,29 @@ class LoginUsecase @Inject constructor() {
 
     private lateinit var rootSMBFile: SmbFile
 
-    suspend fun login(_serverAddress: String, _username: String, _password: String): Flow<LoginState> {
-        return flow {
-            runCatching {
-                val jcifsProperties = Properties().apply {
-                    setProperty(enableSMB2Property, true.toString())
-                    setProperty(distributedFileSystemProperty, false.toString())
-                }
-
-                val config = PropertyConfiguration(jcifsProperties)
-                val baseContext = BaseContext(config)
-                val ntlmPasswordAuthenticator =
-                    NtlmPasswordAuthenticator(serverAddress, username, password)
-                val cifsContext: CIFSContext =
-                    baseContext.withCredentials(ntlmPasswordAuthenticator)
-                rootSMBFile = SmbFile(_serverAddress, cifsContext)
-                rootSMBFile.connect()
-            }.onSuccess {
-                emit(Success(rootSMBFile))
-            }.onFailure {
-                emit(Error(it))
+    operator fun invoke(
+        _serverAddress: String,
+        _username: String,
+        _password: String
+    ): Flow<LoginState> = flow {
+        runCatching {
+            val jcifsProperties = Properties().apply {
+                setProperty(enableSMB2Property, true.toString())
+                setProperty(distributedFileSystemProperty, false.toString())
             }
-        }.flowOn(Dispatchers.IO)
-    }
+
+            val config = PropertyConfiguration(jcifsProperties)
+            val baseContext = BaseContext(config)
+            val ntlmPasswordAuthenticator =
+                NtlmPasswordAuthenticator(serverAddress, username, password)
+            val cifsContext: CIFSContext =
+                baseContext.withCredentials(ntlmPasswordAuthenticator)
+            rootSMBFile = SmbFile(serverAddress, cifsContext)
+            rootSMBFile.connect()
+        }.onSuccess {
+            emit(Success(rootSMBFile))
+        }.onFailure {
+            emit(Error(it))
+        }
+    }.flowOn(Dispatchers.IO)
 }
