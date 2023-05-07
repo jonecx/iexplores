@@ -80,6 +80,14 @@ public class SMBConnection {
         receiveCallback.onReceiveCallback(bundle);
     }
 
+    public void setRootSMBFile(SmbFile rootSMBFile) {
+        this.rootSMBFile = rootSMBFile;
+    }
+
+    public void isConnected(boolean isConnected) {
+        this.isConnectionStabled = isConnected;
+    }
+
     @NonNull
     @Override
     protected Object clone() throws CloneNotSupportedException {
