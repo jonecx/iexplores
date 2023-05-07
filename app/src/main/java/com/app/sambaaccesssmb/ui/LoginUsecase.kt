@@ -1,6 +1,5 @@
 package com.app.sambaaccesssmb.ui
 
-import com.app.sambaaccesssmb.BuildConfig
 import com.app.sambaaccesssmb.ui.LoginViewModel.LoginState
 import com.app.sambaaccesssmb.ui.LoginViewModel.LoginState.Error
 import com.app.sambaaccesssmb.ui.LoginViewModel.LoginState.Success
@@ -20,11 +19,6 @@ class LoginUsecase @Inject constructor() {
     private val enableSMB2Property = "jcifs.smb.client.enableSMB2"
     private val distributedFileSystemProperty = "jcifs.smb.client.dfs.disabled"
 
-    // Test account for development
-    private val serverAddress = BuildConfig.SERVER_ADDRESS
-    private val username = BuildConfig.USERNAME
-    private val password = BuildConfig.PASSWORD
-
     private lateinit var rootSMBFile: SmbFile
 
     operator fun invoke(
@@ -32,6 +26,7 @@ class LoginUsecase @Inject constructor() {
         _username: String,
         _password: String
     ): Flow<LoginState> = flow {
+        val smbServerAddress = "smb://$_serverAddress"
         runCatching {
             val jcifsProperties = Properties().apply {
                 setProperty(enableSMB2Property, true.toString())
@@ -41,10 +36,10 @@ class LoginUsecase @Inject constructor() {
             val config = PropertyConfiguration(jcifsProperties)
             val baseContext = BaseContext(config)
             val ntlmPasswordAuthenticator =
-                NtlmPasswordAuthenticator(serverAddress, username, password)
+                NtlmPasswordAuthenticator(smbServerAddress, _username, _password)
             val cifsContext: CIFSContext =
                 baseContext.withCredentials(ntlmPasswordAuthenticator)
-            rootSMBFile = SmbFile(serverAddress, cifsContext)
+            rootSMBFile = SmbFile(smbServerAddress, cifsContext)
             rootSMBFile.connect()
         }.onSuccess {
             emit(Success(rootSMBFile))

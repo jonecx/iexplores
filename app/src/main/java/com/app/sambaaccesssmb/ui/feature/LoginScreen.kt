@@ -29,6 +29,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.app.sambaaccesssmb.BuildConfig
 import com.app.sambaaccesssmb.R
 import com.app.sambaaccesssmb.R.string
 import com.app.sambaaccesssmb.ui.IndeterminateProgressWheel
@@ -52,9 +53,9 @@ fun EnterCredentialScreen(login: (String, String, String) -> Unit, loginState: L
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val smbAddress = rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue()) }
-        val username = rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue()) }
-        val password = rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue()) }
+        val smbAddress = rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue(text = if (BuildConfig.DEBUG) BuildConfig.SERVER_ADDRESS else "")) }
+        val username = rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue(text = if (BuildConfig.DEBUG) BuildConfig.USERNAME else "")) }
+        val password = rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue(text = if (BuildConfig.DEBUG) BuildConfig.PASSWORD else "")) }
         val keepSignIn = rememberSaveable { mutableStateOf(false) }
 
         if (isError(loginState)) {
