@@ -8,16 +8,19 @@ import com.app.sambaaccesssmb.ui.feature.RemoteFileRoute
 
 const val remoteFileScreenRoute = "remoteFileScreenRoute"
 
-fun NavController.navigateToRemoteFileScreen(
-    navOptions: NavOptions? = null
-) {
-    this.navigate(remoteFileScreenRoute, navOptions)
+fun NavController.navigateToRemoteFileScreen() {
+    this.navigate(
+        remoteFileScreenRoute,
+        NavOptions.Builder()
+            .setPopUpTo(remoteFileScreenRoute, inclusive = true)
+            .build()
+    )
 }
 
 fun NavGraphBuilder.remoteFileScreen(
-    onNavigateToRemoteFile: () -> Unit
+    onNavigateToHomeScreen: () -> Unit
 ) {
     composable(route = remoteFileScreenRoute) {
-        RemoteFileRoute(onNavigateToRemoteFile)
+        RemoteFileRoute(onNavigateToHomeScreen)
     }
 }
