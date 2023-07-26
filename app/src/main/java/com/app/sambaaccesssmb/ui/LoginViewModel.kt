@@ -42,14 +42,14 @@ class LoginViewModel @Inject constructor(private val loginInputValidationUsecase
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5_000),
-            initialValue = Loading
+            initialValue = Loading,
         )
 
     private fun validateLoginInput(serverAddress: String, username: String, password: String) = loginInputValidationUsecase(serverAddress, username, password)
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5_000),
-            initialValue = ValidatingLoginInput
+            initialValue = ValidatingLoginInput,
         )
 
     sealed class LoginInputValidationKey {

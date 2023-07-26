@@ -56,7 +56,7 @@ object ImageLoaderModule {
 
 class SmbFileFetcher(
     private val data: SmbFile,
-    private val options: Options
+    private val options: Options,
 ) : Fetcher {
 
     @OptIn(ExperimentalCoilApi::class)
@@ -69,17 +69,17 @@ class SmbFileFetcher(
             return DrawableResult(
                 drawable = BitmapDrawable(options.context.resources, thumbnailBitmap),
                 isSampled = false,
-                dataSource = MEMORY
+                dataSource = MEMORY,
             )
         } else {
             SourceResult(
                 source = ImageSource(
                     source = inputStream.source().buffer(),
                     context = options.context,
-                    metadata = ContentMetadata(Uri.parse(data.path))
+                    metadata = ContentMetadata(Uri.parse(data.path)),
                 ),
                 mimeType = null, // Let Coil handle the MIME type
-                dataSource = DISK
+                dataSource = DISK,
             )
         }
     }

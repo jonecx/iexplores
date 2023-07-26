@@ -26,9 +26,10 @@ fun SmbTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = false,
     androidTheme: Boolean = false,
-    content: @Composable() () -> Unit
+    content:
+    @Composable()
+    () -> Unit,
 ) {
-
     val colorScheme = when {
         dynamicColor -> {
             if (has(S)) {
@@ -57,7 +58,7 @@ fun SmbTheme(
 
     val defaultBackgroundTheme = BackgroundTheme(
         color = MaterialTheme.colorScheme.surface,
-        tonalElevation = 2.dp
+        tonalElevation = 2.dp,
     )
 
     val backgroundTheme = when {
@@ -68,12 +69,12 @@ fun SmbTheme(
 
     CompositionLocalProvider(
         LocalGradientColors provides gradientColors,
-        LocalBackgroundTheme provides backgroundTheme
+        LocalBackgroundTheme provides backgroundTheme,
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
             typography = SmbTypography,
-            content = content
+            content = content,
         )
     }
 }

@@ -26,7 +26,7 @@ import com.app.sambaaccesssmb.ui.design.SmbTheme
 @Composable
 fun SmbApp(
     windowSizeClass: WindowSizeClass,
-    smbAppState: SmbAppState = rememberSmbAppState(windowSizeClass = windowSizeClass)
+    smbAppState: SmbAppState = rememberSmbAppState(windowSizeClass = windowSizeClass),
 ) {
     SmbTheme {
         Scaffold(
@@ -37,7 +37,7 @@ fun SmbApp(
                 ) {
                     Icon(Icons.Rounded.Add, contentDescription = stringResource(id = R.string.add_servers))
                 }
-            }
+            },
         ) { padding ->
             Column(
                 modifier = Modifier
@@ -45,7 +45,7 @@ fun SmbApp(
                     .fillMaxHeight()
                     .padding(padding),
                 verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 SmbNavHost(navController = smbAppState.navController)
             }

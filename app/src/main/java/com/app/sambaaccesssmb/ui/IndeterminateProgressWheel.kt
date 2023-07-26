@@ -38,7 +38,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun IndeterminateProgressWheel(
     contentDesc: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val infiniteTransition = rememberInfiniteTransition()
 

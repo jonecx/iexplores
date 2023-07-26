@@ -13,12 +13,12 @@ fun NavController.navigateToRemoteFileScreen() {
         remoteFileScreenRoute,
         NavOptions.Builder()
             .setPopUpTo(remoteFileScreenRoute, inclusive = true)
-            .build()
+            .build(),
     )
 }
 
 fun NavGraphBuilder.remoteFileScreen(
-    onNavigateToHomeScreen: () -> Unit
+    onNavigateToHomeScreen: () -> Unit,
 ) {
     composable(route = remoteFileScreenRoute) {
         RemoteFileRoute(onNavigateToHomeScreen)

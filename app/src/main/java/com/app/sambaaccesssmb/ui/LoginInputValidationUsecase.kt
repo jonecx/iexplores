@@ -17,7 +17,7 @@ class LoginInputValidationUsecase @Inject constructor() {
     operator fun invoke(
         serverAddress: String,
         username: String,
-        password: String
+        password: String,
     ): Flow<LoginState> = flow {
         if (!serverAddress.isValidAddress()) {
             emit(Error(validationKey = ServerAddressKey))

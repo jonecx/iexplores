@@ -57,7 +57,7 @@ internal fun RemoteFileRoute(onNavigateToRemoteFile: () -> Unit) {
 @Composable
 internal fun RemoteFileScreen(
     onNavigateToHomeScreen: () -> Unit,
-    filesViewModel: FilesViewModel = hiltViewModel()
+    filesViewModel: FilesViewModel = hiltViewModel(),
 ) {
     val fileCursor = filesViewModel.fileCursor.collectAsStateWithLifecycle().value
     val context = LocalContext.current
@@ -66,32 +66,35 @@ internal fun RemoteFileScreen(
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Testing stuff") }, navigationIcon = {
-                    IconButton(onClick = {
-                        Toast.makeText(context, "Navigation Icon Click", Toast.LENGTH_SHORT)
-                            .show()
-                    }) {
-                        Icon(imageVector = Icons.Filled.Menu, contentDescription = "Navigation icon")
-                    }
-                },
+                    title = { Text("Testing stuff") },
+                    navigationIcon = {
+                        IconButton(onClick = {
+                            Toast.makeText(context, "Navigation Icon Click", Toast.LENGTH_SHORT)
+                                .show()
+                        }) {
+                            Icon(imageVector = Icons.Filled.Menu, contentDescription = "Navigation icon")
+                        }
+                    },
                     windowInsets = WindowInsets(
                         top = 0.dp,
-                        bottom = 0.dp
+                        bottom = 0.dp,
                     ),
                     colors = TopAppBarDefaults.largeTopAppBarColors(containerColor = MaterialTheme.colorScheme.surface, titleContentColor = MaterialTheme.colorScheme.onSurface),
                 )
-            }, content = {
-            Column(modifier = Modifier.padding(it)) {
-                when (fileCursor) {
-                    is Error,
-                    is Loading -> {
-                    }
+            },
+            content = {
+                Column(modifier = Modifier.padding(it)) {
+                    when (fileCursor) {
+                        is Error,
+                        is Loading,
+                        -> {
+                        }
 
-                    is FileState.Success -> SmbItemGrid(fileCursor.smbFiles)
-                    else -> {}
+                        is FileState.Success -> SmbItemGrid(fileCursor.smbFiles)
+                        else -> {}
+                    }
                 }
-            }
-        }
+            },
         )
     } else {
         LaunchedEffect(Unit) {
@@ -113,7 +116,7 @@ internal fun DirectoryItem(directoryItem: Locus) {
                 Toast
                     .makeText(context, directoryItem.originalFile.name, Toast.LENGTH_SHORT)
                     .show()
-            }
+            },
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             Text(
@@ -122,7 +125,7 @@ internal fun DirectoryItem(directoryItem: Locus) {
                 text = directoryItem.fileName,
                 style = MaterialTheme.typography.titleSmall,
                 maxLines = 4,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
             )
             Icon(
                 Icons.Filled.Folder,
@@ -130,7 +133,7 @@ internal fun DirectoryItem(directoryItem: Locus) {
                 tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .size(25.dp)
+                    .size(25.dp),
             )
         }
     }
@@ -140,7 +143,7 @@ internal fun DirectoryItem(directoryItem: Locus) {
 internal fun SmbItemGrid(fileItems: List<Locus>) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(120.dp),
-        contentPadding = PaddingValues(1.dp)
+        contentPadding = PaddingValues(1.dp),
     ) {
         items(fileItems) { item ->
             when (item.isDirectory) {
@@ -162,7 +165,7 @@ internal fun FileItem(fileItem: Locus) {
                 Toast
                     .makeText(context, fileItem.originalFile.name, Toast.LENGTH_SHORT)
                     .show()
-            }
+            },
     ) {
         when {
             fileItem.originalFile.isImage() -> ImagePlate(fileItem = fileItem)
@@ -182,7 +185,7 @@ internal fun ImagePlate(fileItem: Locus) {
         imageLoader = { imageLoader },
         imageOptions = ImageOptions(
             contentScale = ContentScale.Crop,
-            alignment = Alignment.Center
+            alignment = Alignment.Center,
         ),
         failure = { its ->
             print(its)
@@ -190,9 +193,9 @@ internal fun ImagePlate(fileItem: Locus) {
         loading = {
             IndeterminateProgressWheel(
                 contentDesc = "Loading",
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             )
-        }
+        },
     )
 }
 
@@ -205,7 +208,7 @@ internal fun VideoPlate(fileItem: Locus) {
             contentDescription = null,
             modifier = Modifier
                 .align(Alignment.Center)
-                .size(48.dp)
+                .size(48.dp),
         )
     }
 }
@@ -219,7 +222,7 @@ internal fun OtherPlate(fileItem: Locus) {
             text = fileItem.originalFile.name,
             style = MaterialTheme.typography.titleSmall,
             maxLines = 4,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
         )
         Column(
             verticalArrangement = Arrangement.Center,
@@ -234,7 +237,7 @@ internal fun OtherPlate(fileItem: Locus) {
                 text = fileItem.originalFile.name.substringAfter("."),
                 style = MaterialTheme.typography.labelSmall,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
             )
         }
     }

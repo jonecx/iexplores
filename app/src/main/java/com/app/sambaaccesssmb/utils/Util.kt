@@ -28,7 +28,9 @@ fun SmbFile.itemCount(directory: Boolean): String {
         }.getOrElse {
             ""
         }
-    } else ""
+    } else {
+        ""
+    }
 }
 
 private fun getMimeType(path: String) = URLConnection.guessContentTypeFromName(path).orEmpty()

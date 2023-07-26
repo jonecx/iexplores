@@ -51,7 +51,7 @@ fun EnterCredentialScreen(login: (String, String, String) -> Unit, loginState: L
             .fillMaxHeight()
             .fillMaxWidth(),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         val smbAddress = rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue(text = if (BuildConfig.DEBUG) BuildConfig.SERVER_ADDRESS else "")) }
         val username = rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue(text = if (BuildConfig.DEBUG) BuildConfig.USERNAME else "")) }
@@ -69,7 +69,7 @@ fun EnterCredentialScreen(login: (String, String, String) -> Unit, loginState: L
             singleLine = true,
             isError = isError(loginState, ServerAddressKey),
             supportingText = { SupportingText(loginState = loginState, ServerAddressKey) },
-            trailingIcon = { TrailingIcon(loginState = loginState, ServerAddressKey) }
+            trailingIcon = { TrailingIcon(loginState = loginState, ServerAddressKey) },
         )
         Spacer(modifier = Modifier.padding(8.dp))
         OutlinedTextField(
@@ -79,7 +79,7 @@ fun EnterCredentialScreen(login: (String, String, String) -> Unit, loginState: L
             singleLine = true,
             isError = isError(loginState, UsernameKey),
             supportingText = { SupportingText(loginState = loginState, UsernameKey) },
-            trailingIcon = { TrailingIcon(loginState = loginState, UsernameKey) }
+            trailingIcon = { TrailingIcon(loginState = loginState, UsernameKey) },
         )
         Spacer(modifier = Modifier.padding(8.dp))
         OutlinedTextField(
@@ -91,15 +91,15 @@ fun EnterCredentialScreen(login: (String, String, String) -> Unit, loginState: L
             supportingText = { SupportingText(loginState = loginState, PasswordKey) },
             trailingIcon = { TrailingIcon(loginState = loginState, PasswordKey) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            visualTransformation = PasswordVisualTransformation()
+            visualTransformation = PasswordVisualTransformation(),
         )
         Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
             Checkbox(
                 checked = keepSignIn.value,
-                onCheckedChange = { keepSignIn.value = it }
+                onCheckedChange = { keepSignIn.value = it },
             )
             Spacer(Modifier.size(6.dp))
-            Text(text = stringResource(id = R.string.keep_me_signed_in),)
+            Text(text = stringResource(id = R.string.keep_me_signed_in))
             Spacer(modifier = Modifier.padding(end = 115.dp))
         }
         Button(onClick = {
@@ -118,7 +118,7 @@ private fun getErrorString(validationKey: LoginInputValidationKey): String {
             UsernameKey -> R.string.invalid_username_error
             PasswordKey -> R.string.invalid_password_error
             GeneralErrorKey -> R.string.unknown_error
-        }
+        },
     )
 }
 
@@ -128,7 +128,7 @@ private fun SupportingText(loginState: LoginState?, validationKey: LoginInputVal
         Text(
             modifier = Modifier.fillMaxWidth(),
             text = getErrorString(validationKey = validationKey),
-            color = MaterialTheme.colorScheme.error
+            color = MaterialTheme.colorScheme.error,
         )
     }
 }
@@ -139,7 +139,7 @@ private fun TrailingIcon(loginState: LoginState?, validationKey: LoginInputValid
         Icon(
             Icons.Filled.Error,
             getErrorString(validationKey = validationKey),
-            tint = MaterialTheme.colorScheme.error
+            tint = MaterialTheme.colorScheme.error,
         )
     }
 }
