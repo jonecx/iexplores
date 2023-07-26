@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.Dp
 
 val LightDefaultGradientColors = GradientColors(
     primary = md_theme_light_primary,
-    secondary = md_theme_light_secondary
+    secondary = md_theme_light_secondary,
 )
 
 /**
@@ -22,7 +22,7 @@ data class GradientColors(
     val primary: Color = Color.Unspecified,
     val secondary: Color = Color.Unspecified,
     val tertiary: Color = Color.Unspecified,
-    val neutral: Color = Color.Unspecified
+    val neutral: Color = Color.Unspecified,
 )
 
 /**
@@ -36,7 +36,7 @@ val LocalGradientColors = staticCompositionLocalOf { GradientColors() }
 @Immutable
 data class BackgroundTheme(
     val color: Color = Color.Unspecified,
-    val tonalElevation: Dp = Dp.Unspecified
+    val tonalElevation: Dp = Dp.Unspecified,
 )
 
 /**

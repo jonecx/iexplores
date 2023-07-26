@@ -23,7 +23,7 @@ object Build {
             VERSION_CODES.R, // 11.0 - 30
             VERSION_CODES.S, // 12.0 - 31
             VERSION_CODES.S_V2, // 12.0L
-        ]
+        ],
     )
     @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
     annotation class SdkVersion

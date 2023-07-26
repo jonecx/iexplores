@@ -24,7 +24,7 @@ class LoginUsecase @Inject constructor() {
     operator fun invoke(
         _serverAddress: String,
         _username: String,
-        _password: String
+        _password: String,
     ): Flow<LoginState> = flow {
         val smbServerAddress = "smb://$_serverAddress"
         runCatching {

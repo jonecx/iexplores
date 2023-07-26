@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
-    ext.kotlin_version = "1.8.0"
-    ext.ktlint_version = "0.43.2"
+    ext.kotlin_version = "1.8.22"
+    ext.ktlint_version = "0.50.0"
 
     repositories {
         google()
@@ -14,7 +14,7 @@ buildscript {
 }
 
 plugins {
-    id 'com.diffplug.spotless' version '6.1.2'
+    id 'com.diffplug.spotless' version '6.20.0'
     id 'com.google.dagger.hilt.android' version '2.44' apply false
 }
 
@@ -42,8 +42,4 @@ spotless {
         trimTrailingWhitespace()
         endWithNewline()
     }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
 }

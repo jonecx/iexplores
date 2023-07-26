@@ -14,20 +14,20 @@ import com.app.sambaaccesssmb.ui.feature.navigation.remoteFileScreenRoute
 @Composable
 fun SmbNavHost(
     navController: NavHostController,
-    startDestination: String = remoteFileScreenRoute
+    startDestination: String = remoteFileScreenRoute,
 ) {
     val context = LocalContext.current
 
     NavHost(
         navController = navController,
-        startDestination = startDestination
+        startDestination = startDestination,
     ) {
         homeScreen(
             onBackClick = { (context as ComponentActivity).finish() },
-            onNavigateToRemoteFile = { navController.navigateToRemoteFileScreen() }
+            onNavigateToRemoteFile = { navController.navigateToRemoteFileScreen() },
         )
         remoteFileScreen(
-            onNavigateToHomeScreen = { navController.navigateToHomeScreen() }
+            onNavigateToHomeScreen = { navController.navigateToHomeScreen() },
         )
     }
 }

@@ -16,11 +16,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class FilesViewModel @Inject constructor() : ViewModel() {
 
+    companion object {
+        private const val TAG = "FilesViewModel"
+    }
     private val sampleFolderName = "Sample"
 
     val fileCursor: StateFlow<FileState> = flow<FileState> {
@@ -36,6 +40,7 @@ class FilesViewModel @Inject constructor() : ViewModel() {
             }.toList()
             emit(Success(smbItems))
         }.getOrElse {
+            Timber.d(it, it.localizedMessage.orEmpty())
             emit(Error)
         }
     }.flowOn(Dispatchers.IO)

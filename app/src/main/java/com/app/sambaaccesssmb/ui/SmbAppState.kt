@@ -15,7 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 fun rememberSmbAppState(
     windowSizeClass: WindowSizeClass,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
 ): SmbAppState {
     return remember(navController, coroutineScope, windowSizeClass) {
         SmbAppState(navController, coroutineScope, windowSizeClass)
@@ -26,7 +26,7 @@ fun rememberSmbAppState(
 class SmbAppState(
     val navController: NavHostController,
     val coroutineScope: CoroutineScope,
-    val windowSizeClass: WindowSizeClass
+    val windowSizeClass: WindowSizeClass,
 ) {
     val currentDestination: NavDestination?
         @Composable get() = navController

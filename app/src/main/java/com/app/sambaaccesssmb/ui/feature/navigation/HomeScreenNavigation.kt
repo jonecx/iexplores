@@ -14,7 +14,7 @@ fun NavController.navigateToHomeScreen() {
         NavOptions.Builder()
             .setLaunchSingleTop(true)
             .setPopUpTo(homeScreenRoute, inclusive = true)
-            .build()
+            .build(),
     )
 }
 

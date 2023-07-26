@@ -19,14 +19,15 @@ import jcifs.smb.SmbFile
 internal fun HomeRoute(
     onBackClick: () -> Unit,
     onNavigateToRemoteFile: () -> Unit,
-    loginViewModel: LoginViewModel = hiltViewModel()
+    loginViewModel: LoginViewModel = hiltViewModel(),
 ) {
     val loginState = loginViewModel.loginUiState.collectAsStateWithLifecycle()
 
     when (loginState.value) {
         ValidatingLoginInput,
         LoginInputValidationSuccessful,
-        Loading -> LoginInProgress()
+        Loading,
+        -> LoginInProgress()
         Initial -> EnterCredentialScreen(loginViewModel::doLogin)
         is Error -> EnterCredentialScreen(loginViewModel::doLogin, loginState.value)
         is Success -> LaunchedEffect(loginState.value) {
