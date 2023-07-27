@@ -1,10 +1,11 @@
 package com.app.sambaaccesssmb.ui.feature.fvm
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.sambaaccesssmb.SMBAccess
 import com.app.sambaaccesssmb.ui.feature.fvm.FileState.Downloading
-import com.app.sambaaccesssmb.ui.feature.fvm.FileState.DownloadingSuccess
 import com.app.sambaaccesssmb.ui.feature.fvm.FileState.Error
 import com.app.sambaaccesssmb.ui.feature.fvm.FileState.Loading
 import com.app.sambaaccesssmb.ui.feature.fvm.FileState.Success
@@ -28,7 +29,7 @@ import javax.inject.Inject
 class FilesViewModel @Inject constructor() : ViewModel() {
 
     private val sampleFolderName = "Sample"
-    var mediaId = ""
+    var selectedSmbFile: SmbFile? = null
 
     val fileCursor: StateFlow<FileState> = flow<FileState> {
         runCatching {
@@ -52,15 +53,10 @@ class FilesViewModel @Inject constructor() : ViewModel() {
             initialValue = Loading,
         )
 
-    val smbs: StateFlow<FileState> = flow<FileState> {
+    val displaySmbFile: StateFlow<FileState> = flow<FileState> {
         runCatching {
-            val cifsContext =
-                SMBAccess.getCIFSContext("smb://10.4.204.193", "spinner", "plYC_0eXD1p_GDZ")
-            val smbFile =
-                SmbFile("smb://10.4.204.193/Radioactivity/Sample/Sniff Petrol/", cifsContext)
-
-            smbFile.listFiles().firstOrNull { it.name == "abirdie.jpg" }?.let { smbItem ->
-                DirUtil.getTempFile("abirdie.jpg")?.let { tempFile ->
+            selectedSmbFile?.let { smbItem ->
+                DirUtil.getTempFile(smbItem.name)?.let { tempFile ->
                     var downloadedBytes = 0L
                     val tempFilePath = tempFile.path
                     val smbFileSize = smbItem.length()
@@ -75,16 +71,15 @@ class FilesViewModel @Inject constructor() : ViewModel() {
                             downloadedBytes += bytesRead
                             if (downloadedBytes > 0) {
                                 val progress = downloadedBytes.div(smbFileSize) * 100
-                                emit(Downloading(progress.toInt()))
+                                emit(Downloading(progress.toFloat()))
                             }
                         }
                     }
                     inputStream.close()
                     fileOutputStream.close()
-                    emit(DownloadingSuccess(tempFilePath))
+                    emit(FileState.DownloadCompleted(tempFilePath))
                 }
             }
-
         }.getOrElse {
             Timber.d(it, it.localizedMessage.orEmpty())
             emit(Error)
@@ -101,8 +96,8 @@ data class Locus(var fileName: String, val isDirectory: Boolean, val itemCount: 
 
 sealed interface FileState {
     data class Success(val smbFiles: List<Locus>) : FileState
-    data class Downloading(val progress: Int) : FileState
-    data class DownloadingSuccess(val progress: String) : FileState
+    data class Downloading(val progress: Float) : FileState
+    data class DownloadCompleted(val filePath: String) : FileState
     object Error : FileState
     object Loading : FileState
 }

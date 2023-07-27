@@ -2,6 +2,7 @@ package com.app.sambaaccesssmb.ui
 
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -32,9 +33,9 @@ fun SmbNavHost(
         )
         remoteFileScreen(
             onNavigateToHomeScreen = { navController.navigateToHomeScreen() },
-            onMediaClick = { mediaId ->
-                fileViewModel.mediaId = mediaId
-                navController.navigateToMedia(mediaId)
+            onMediaClick = { smbFile ->
+                fileViewModel.selectedSmbFile = smbFile
+                navController.navigateToMedia(smbFile)
             },
             nestedGraphs = {
                 mediaScreen(

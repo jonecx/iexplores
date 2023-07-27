@@ -24,4 +24,5 @@
     <string name="invalid_password_error">Password cannot be empty.</string>
     <string name="back_button">back button</string>
     <string name="app_name_rebrand">iExplore</string>
+    <string name="loading_data">One moment, please&#8230;"</string>
 </resources>

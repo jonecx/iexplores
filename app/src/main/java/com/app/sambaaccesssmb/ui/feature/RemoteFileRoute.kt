@@ -27,13 +27,15 @@ import com.app.sambaaccesssmb.R
 import com.app.sambaaccesssmb.SMBAccess
 import com.app.sambaaccesssmb.ui.feature.compose.DirectoryPlate
 import com.app.sambaaccesssmb.ui.feature.compose.FilePlate
+import com.app.sambaaccesssmb.ui.feature.compose.Waiting
 import com.app.sambaaccesssmb.ui.feature.fvm.FileState
 import com.app.sambaaccesssmb.ui.feature.fvm.FileState.Loading
 import com.app.sambaaccesssmb.ui.feature.fvm.FilesViewModel
 import com.app.sambaaccesssmb.ui.feature.fvm.Locus
+import jcifs.smb.SmbFile
 
 @Composable
-internal fun RemoteFileRoute(onNavigateToRemoteFile: () -> Unit, onMediaClick: (String) -> Unit, fileViewModel: FilesViewModel) {
+internal fun RemoteFileRoute(onNavigateToRemoteFile: () -> Unit, onMediaClick: (SmbFile) -> Unit, fileViewModel: FilesViewModel) {
     RemoteFileScreen(onNavigateToRemoteFile, onMediaClick, fileViewModel)
 }
 
@@ -41,7 +43,7 @@ internal fun RemoteFileRoute(onNavigateToRemoteFile: () -> Unit, onMediaClick: (
 @Composable
 internal fun RemoteFileScreen(
     onNavigateToHomeScreen: () -> Unit,
-    onMediaClick: (String) -> Unit,
+    onMediaClick: (SmbFile) -> Unit,
     filesViewModel: FilesViewModel,
 ) {
     val fileCursor = filesViewModel.fileCursor.collectAsStateWithLifecycle().value
@@ -66,13 +68,11 @@ internal fun RemoteFileScreen(
             content = {
                 Column(modifier = Modifier.padding(it)) {
                     when (fileCursor) {
-                        is Error,
-                        is Loading,
-                        -> {
-                        }
-
+                        is FileState.Error,
+                        is FileState.Loading,
+                        -> Waiting(fileCursor)
                         is FileState.Success -> SmbItemGrid(fileCursor.smbFiles, onMediaClick)
-                        else -> {}
+                        else -> Waiting(fileCursor)
                     }
                 }
             },
@@ -85,7 +85,7 @@ internal fun RemoteFileScreen(
 }
 
 @Composable
-internal fun SmbItemGrid(fileItems: List<Locus>, onMediaClick: (String) -> Unit) {
+internal fun SmbItemGrid(fileItems: List<Locus>, onMediaClick: (SmbFile) -> Unit) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(120.dp),
         contentPadding = PaddingValues(1.dp),

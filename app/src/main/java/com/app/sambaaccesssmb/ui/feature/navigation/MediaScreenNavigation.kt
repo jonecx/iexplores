@@ -9,20 +9,21 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.app.sambaaccesssmb.ui.feature.MediaRoute
 import com.app.sambaaccesssmb.ui.feature.fvm.FilesViewModel
+import jcifs.smb.SmbFile
 
 @VisibleForTesting
 internal const val mediaIdArg = "mediaId"
 
 const val mediaScreenRoute = "mediaScreenRoute"
 
-fun NavController.navigateToMedia(mediaId: String) {
-    val encodedMediaId = Uri.encode(mediaId)
+fun NavController.navigateToMedia(smbFile: SmbFile) {
+    val encodedMediaId = Uri.encode(smbFile.path)
     this.navigate("$mediaScreenRoute/$encodedMediaId")
 }
 
 fun NavGraphBuilder.mediaScreen(
     onBackClick: () -> Unit,
-    onMediaClick: (String) -> Unit,
+    onMediaClick: (SmbFile) -> Unit,
     fileViewModel: FilesViewModel,
 ) {
     composable(
