@@ -53,39 +53,38 @@ class FilesViewModel @Inject constructor() : ViewModel() {
         )
 
     val smbs: StateFlow<FileState> = flow<FileState> {
-        var progress = 0
         runCatching {
-            val cifsContext = SMBAccess.getCIFSContext("smb://10.4.204.193", "spinner", "plYC_0eXD1p_GDZ")
-            val smbFile = SmbFile("smb://10.4.204.193/Radioactivity/Sample/Sniff Petrol/", cifsContext)
+            val cifsContext =
+                SMBAccess.getCIFSContext("smb://10.4.204.193", "spinner", "plYC_0eXD1p_GDZ")
+            val smbFile =
+                SmbFile("smb://10.4.204.193/Radioactivity/Sample/Sniff Petrol/", cifsContext)
 
-            val smbFilez = smbFile.listFiles().filter { it.name == "abirdie.jpg" }
-            print(smbFilez)
-            val fis = smbFilez[0].inputStream
-            val inputStream = BufferedInputStream(fis)
-            val temp = DirUtil.getTempFile("abirdie.jpg")
-            val pt = temp?.path
-            print(pt)
-            val fileSize = smbFilez[0].length()
-            val fileOutputStream = FileOutputStream(temp)
-
-            val buffer = ByteArray(1024)
-            var bytesRead: Int
-            while (inputStream.read(buffer).also { bytesRead = it } != -1) {
-                fileOutputStream.write(buffer, 0, bytesRead)
-                if (bytesRead > 0) {
-                    progress += bytesRead
-                    if (progress > 0) {
-                        val x = progress.toFloat().div(fileSize)
-                        print(x)
-                        val p = x * 100
-                        emit(Downloading(p.toInt()))
+            smbFile.listFiles().firstOrNull { it.name == "abirdie.jpg" }?.let { smbItem ->
+                DirUtil.getTempFile("abirdie.jpg")?.let { tempFile ->
+                    var downloadedBytes = 0L
+                    val tempFilePath = tempFile.path
+                    val smbFileSize = smbItem.length()
+                    val fileInputStream = smbItem.inputStream
+                    val inputStream = BufferedInputStream(fileInputStream)
+                    val fileOutputStream = FileOutputStream(tempFile)
+                    val buffer = ByteArray(1024)
+                    var bytesRead: Int
+                    while (inputStream.read(buffer).also { bytesRead = it } != -1) {
+                        fileOutputStream.write(buffer, 0, bytesRead)
+                        if (bytesRead > 0) {
+                            downloadedBytes += bytesRead
+                            if (downloadedBytes > 0) {
+                                val progress = downloadedBytes.div(smbFileSize) * 100
+                                emit(Downloading(progress.toInt()))
+                            }
+                        }
                     }
+                    inputStream.close()
+                    fileOutputStream.close()
+                    emit(DownloadingSuccess(tempFilePath))
                 }
             }
 
-            inputStream.close()
-            fileOutputStream.close()
-            emit(DownloadingSuccess(pt!!))
         }.getOrElse {
             Timber.d(it, it.localizedMessage.orEmpty())
             emit(Error)
