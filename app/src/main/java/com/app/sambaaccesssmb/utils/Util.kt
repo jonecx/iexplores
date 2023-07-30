@@ -4,8 +4,23 @@ import android.net.InetAddresses.isNumericAddress
 import android.os.Build.VERSION_CODES.Q
 import android.util.Patterns
 import jcifs.smb.SmbFile
+import timber.log.Timber
+import java.io.File
 import java.net.URLConnection
 import java.util.Locale
+
+object DirUtil {
+    fun getTempFile(tempFileName: String): File? {
+        return runCatching {
+            val dir = System.getProperty("java.io.tmpdir", ".")?.let { File(it) }
+            val f = File(dir, tempFileName)
+            return f
+        }.getOrElse {
+            Timber.d(it, it.localizedMessage.orEmpty())
+            null
+        }
+    }
+}
 
 fun String?.isValidAddress(): Boolean {
     return this?.let {

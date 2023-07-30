@@ -34,6 +34,8 @@ public class SMBConnection {
     private ReceiveCallback receiveCallback;
     private SmbFile rootSMBFile;
     private SmbFile currentSMBFile;
+
+    private CIFSContext smbContext;
     private boolean threadRunning = true;
     private final Runnable runnable =
             new Runnable() {
@@ -82,6 +84,14 @@ public class SMBConnection {
 
     public void setRootSMBFile(SmbFile rootSMBFile) {
         this.rootSMBFile = rootSMBFile;
+    }
+
+    public CIFSContext getSmbContext() {
+        return smbContext;
+    }
+
+    public void setSmbContext(CIFSContext context) {
+        this.smbContext = context;
     }
 
     public void isConnected(boolean isConnected) {

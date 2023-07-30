@@ -1,31 +1,45 @@
-package com.app.sambaaccesssmb.ui
+package com.app.sambaaccesssmb.ui.feature.fvm
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.sambaaccesssmb.SMBAccess
-import com.app.sambaaccesssmb.ui.FileState.Error
-import com.app.sambaaccesssmb.ui.FileState.Loading
-import com.app.sambaaccesssmb.ui.FileState.Success
+import com.app.sambaaccesssmb.ui.FileDownloadUseCase
+import com.app.sambaaccesssmb.ui.feature.fvm.FileState.Error
+import com.app.sambaaccesssmb.ui.feature.fvm.FileState.Loading
+import com.app.sambaaccesssmb.ui.feature.fvm.FileState.Success
 import com.app.sambaaccesssmb.utils.capitalizeFirst
 import com.app.sambaaccesssmb.utils.itemCount
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jcifs.smb.SmbFile
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class FilesViewModel @Inject constructor() : ViewModel() {
+class FilesViewModel @Inject constructor(private val fileDownloadUseCase: FileDownloadUseCase) : ViewModel() {
 
     companion object {
         private const val TAG = "FilesViewModel"
     }
+
     private val sampleFolderName = "Sample"
+
+    private val _fileDownloadState = MutableStateFlow<FileState>(Loading)
+    val fileDownloadState: StateFlow<FileState> = _fileDownloadState.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = Loading,
+    )
 
     val fileCursor: StateFlow<FileState> = flow<FileState> {
         runCatching {
@@ -40,7 +54,7 @@ class FilesViewModel @Inject constructor() : ViewModel() {
             }.toList()
             emit(Success(smbItems))
         }.getOrElse {
-            Timber.d(it, it.localizedMessage.orEmpty())
+            Timber.d(TAG, it, it.localizedMessage.orEmpty())
             emit(Error)
         }
     }.flowOn(Dispatchers.IO)
@@ -49,12 +63,22 @@ class FilesViewModel @Inject constructor() : ViewModel() {
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = Loading,
         )
+
+    fun downloadFile(filePath: String) {
+        viewModelScope.launch {
+            fileDownloadUseCase(filePath).collectLatest {
+                _fileDownloadState.value = it
+            }
+        }
+    }
 }
 
 data class Locus(var fileName: String, val isDirectory: Boolean, val itemCount: String = "", val originalFile: SmbFile)
 
 sealed interface FileState {
     data class Success(val smbFiles: List<Locus>) : FileState
+    data class Downloading(val progress: Int) : FileState
+    data class DownloadCompleted(val filePath: String) : FileState
     object Error : FileState
     object Loading : FileState
 }
