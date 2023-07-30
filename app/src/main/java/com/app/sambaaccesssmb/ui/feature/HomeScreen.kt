@@ -44,6 +44,7 @@ internal fun HomeRoute(
 private fun setupSmbConnection(rootSmb: SmbFile) {
     SMBAccess.getSmbConnectionInstance().apply {
         rootSMBFile = rootSmb
+        smbContext = rootSMBFile.context
         isConnected(rootSmb.exists())
     }
 }
