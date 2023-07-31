@@ -34,7 +34,7 @@ fun DisplayMediumText(text: String = "Sample Text", color: Color = MaterialTheme
     Text(
         text = text,
         style = SmbTypography.displayMedium,
-        color = MaterialTheme.colorScheme.onSurface,
+        color = color,
 
     )
 }
@@ -44,7 +44,7 @@ fun DisplaySmallText(text: String = "Sample Text", color: Color = MaterialTheme.
     Text(
         text = text,
         style = SmbTypography.displaySmall,
-        color = MaterialTheme.colorScheme.onSurface,
+        color = color,
 
     )
 }
@@ -54,7 +54,7 @@ fun HeadlineLargeText(text: String = "Sample Text", color: Color = MaterialTheme
     Text(
         text = text,
         style = SmbTypography.headlineLarge,
-        color = MaterialTheme.colorScheme.onSurface,
+        color = color,
 
     )
 }
@@ -64,7 +64,7 @@ fun HeadlineMediumText(text: String = "Sample Text", color: Color = MaterialThem
     Text(
         text = text,
         style = SmbTypography.headlineMedium,
-        color = MaterialTheme.colorScheme.onSurface,
+        color = color,
 
     )
 }
@@ -74,7 +74,7 @@ fun HeadlineSmallText(text: String = "Sample Text", color: Color = MaterialTheme
     Text(
         text = text,
         style = SmbTypography.headlineSmall,
-        color = MaterialTheme.colorScheme.onSurface,
+        color = color,
 
     )
 }
@@ -84,7 +84,7 @@ fun TitleLargeText(text: String = "Sample Text", color: Color = MaterialTheme.co
     Text(
         text = text,
         style = SmbTypography.titleLarge,
-        color = MaterialTheme.colorScheme.onSurface,
+        color = color,
 
     )
 }
@@ -94,7 +94,7 @@ fun TitleMediumText(text: String = "Sample Text", color: Color = MaterialTheme.c
     Text(
         text = text,
         style = SmbTypography.titleMedium,
-        color = MaterialTheme.colorScheme.onSurface,
+        color = color,
 
     )
 }
@@ -104,7 +104,7 @@ fun TitleSmallText(text: String = "Sample Text", color: Color = MaterialTheme.co
     Text(
         text = text,
         style = SmbTypography.titleSmall,
-        color = MaterialTheme.colorScheme.onSurface,
+        color = color,
 
     )
 }
@@ -114,7 +114,7 @@ fun BodyLargeText(text: String = "Sample Text", color: Color = MaterialTheme.col
     Text(
         text = text,
         style = SmbTypography.bodyLarge,
-        color = MaterialTheme.colorScheme.onSurface,
+        color = color,
 
     )
 }
@@ -124,7 +124,7 @@ fun BodyMediumText(text: String = "Sample Text", color: Color = MaterialTheme.co
     Text(
         text = text,
         style = SmbTypography.bodyMedium,
-        color = MaterialTheme.colorScheme.onSurface,
+        color = color,
 
     )
 }
@@ -134,7 +134,7 @@ fun BodySmallText(text: String = "Sample Text", color: Color = MaterialTheme.col
     Text(
         text = text,
         style = SmbTypography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurface,
+        color = color,
 
     )
 }
@@ -144,7 +144,7 @@ fun LabelLargeText(text: String = "Sample Text", color: Color = MaterialTheme.co
     Text(
         text = text,
         style = SmbTypography.labelLarge,
-        color = MaterialTheme.colorScheme.onSurface,
+        color = color,
 
     )
 }
@@ -154,7 +154,7 @@ fun LabelMediumText(text: String = "Sample Text", color: Color = MaterialTheme.c
     Text(
         text = text,
         style = SmbTypography.labelMedium,
-        color = MaterialTheme.colorScheme.onSurface,
+        color = color,
 
     )
 }
@@ -164,7 +164,7 @@ fun LabelSmallText(text: String = "Sample Text", color: Color = MaterialTheme.co
     Text(
         text = text,
         style = SmbTypography.labelSmall,
-        color = MaterialTheme.colorScheme.onSurface,
+        color = color,
 
     )
 }
