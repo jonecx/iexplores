@@ -16,12 +16,15 @@ import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.decode.ImageSource
 import coil.decode.VideoFrameDecoder
+import coil.disk.DiskCache
 import coil.fetch.DrawableResult
 import coil.fetch.FetchResult
 import coil.fetch.Fetcher
 import coil.fetch.SourceResult
 import coil.request.Options
 import com.app.sambaaccesssmb.utils.Build
+import com.app.sambaaccesssmb.utils.DirUtil
+import com.app.sambaaccesssmb.utils.getFormattedName
 import com.app.sambaaccesssmb.utils.isVideo
 import dagger.Module
 import dagger.Provides
@@ -29,9 +32,9 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import jcifs.smb.SmbFile
+import kotlinx.coroutines.Dispatchers
 import okio.buffer
 import okio.source
-import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
 
@@ -41,6 +44,13 @@ object ImageLoaderModule {
     @Provides
     fun provideImageLoader(@ApplicationContext context: Context): ImageLoader {
         return ImageLoader.Builder(context)
+            .diskCache {
+                DiskCache.Builder()
+                    .directory(context.cacheDir.apply { mkdirs() })
+                    .maxSizePercent(0.05)
+                    .cleanupDispatcher(Dispatchers.IO)
+                    .build()
+            }
             .components {
                 add(SmbFileFetcher.Factory())
                 add(VideoFrameDecoder.Factory())
@@ -63,7 +73,7 @@ class SmbFileFetcher(
     override suspend fun fetch(): FetchResult {
         val inputStream = data.inputStream
 
-        val tempFileName = data.url.path.toString().replace("/", "_")
+        val tempFileName = data.getFormattedName()
         return if (data.isVideo()) {
             val thumbnailBitmap = getThumbnail(tempFileName, inputStream)
             return DrawableResult(
@@ -86,7 +96,7 @@ class SmbFileFetcher(
 
     private fun getThumbnail(fileName: String, inputStream: InputStream): Bitmap {
         // TODO CoilImage smb client video thumbnail support (check if temp file is around: reuse)
-        val tempFile = getTempFile(fileName)!!
+        val tempFile = DirUtil.getTempFile(fileName)!!
 
         if (!tempFile.exists()) {
             val outputStream = FileOutputStream(tempFile)
@@ -102,14 +112,6 @@ class SmbFileFetcher(
             }
         }
         return ThumbnailUtils.createVideoThumbnail(tempFile, Size(500, 500), null)
-    }
-
-    private fun getTempFile(tempFileName: String): File? {
-        return runCatching {
-            val dir = System.getProperty("java.io.tmpdir", ".")?.let { File(it) }
-            val f = File(dir, tempFileName)
-            return f
-        }.getOrNull()
     }
 
     class Factory : Fetcher.Factory<SmbFile> {
