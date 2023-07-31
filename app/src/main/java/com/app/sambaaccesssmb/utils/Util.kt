@@ -58,3 +58,12 @@ fun SmbFile.isImage(): Boolean {
 fun SmbFile.isGif() = this.isImage() && getMimeType(this.path).contains("gif")
 
 fun SmbFile.isVideo() = getMimeType(this.path).contains("video")
+
+fun SmbFile.getFormattedName() = this.url.path.replace("/", "_")
+
+fun SmbFile.isAvailableLocally(): Boolean {
+    val localFile = DirUtil.getTempFile(this.getFormattedName())
+    return localFile?.let {
+        localFile.isFile && localFile.length() == this.length()
+    } ?: false
+}
