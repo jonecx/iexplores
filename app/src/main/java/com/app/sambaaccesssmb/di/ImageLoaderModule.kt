@@ -29,6 +29,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import jcifs.smb.SmbFile
+import kotlinx.coroutines.Dispatchers
 import okio.buffer
 import okio.source
 import java.io.File
@@ -41,6 +42,13 @@ object ImageLoaderModule {
     @Provides
     fun provideImageLoader(@ApplicationContext context: Context): ImageLoader {
         return ImageLoader.Builder(context)
+            .diskCache {
+                DiskCache.Builder()
+                    .directory(context.cacheDir.apply { mkdirs() })
+                    .maxSizePercent(0.05)
+                    .cleanupDispatcher(Dispatchers.IO)
+                    .build()
+            }
             .components {
                 add(SmbFileFetcher.Factory())
                 add(VideoFrameDecoder.Factory())
@@ -63,7 +71,7 @@ class SmbFileFetcher(
     override suspend fun fetch(): FetchResult {
         val inputStream = data.inputStream
 
-        val tempFileName = data.url.path.toString().replace("/", "_")
+        val tempFileName = data.getFormattedName()
         return if (data.isVideo()) {
             val thumbnailBitmap = getThumbnail(tempFileName, inputStream)
             return DrawableResult(
