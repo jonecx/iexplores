@@ -10,20 +10,18 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.app.sambaaccesssmb.R
 import com.app.sambaaccesssmb.ui.feature.compose.HeadlineLargeText
 import com.app.sambaaccesssmb.ui.feature.compose.LabelLargeText
+import com.app.sambaaccesssmb.ui.feature.compose.ZoomableImagePlate
 import com.app.sambaaccesssmb.ui.feature.fvm.FileState.DownloadCompleted
 import com.app.sambaaccesssmb.ui.feature.fvm.FileState.Downloading
 import com.app.sambaaccesssmb.ui.feature.fvm.FileState.Error
 import com.app.sambaaccesssmb.ui.feature.fvm.FileState.Loading
 import com.app.sambaaccesssmb.ui.feature.fvm.FileState.Success
 import com.app.sambaaccesssmb.ui.feature.fvm.FilesViewModel
-import com.skydoves.landscapist.ImageOptions
-import com.skydoves.landscapist.coil.CoilImage
 import jcifs.smb.SmbFile
 
 @Composable
@@ -67,13 +65,7 @@ internal fun MediaScreen(
                     HeadlineLargeText(displaySmbFileState.progress.toString())
                 }
                 is DownloadCompleted -> {
-                    CoilImage(
-                        imageModel = { displaySmbFileState.filePath },
-                        imageOptions = ImageOptions(
-                            contentScale = ContentScale.Crop,
-                            alignment = Alignment.Center,
-                        ),
-                    )
+                    ZoomableImagePlate(mediaUrl = displaySmbFileState.filePath)
                 }
                 is Success,
                 is Error,
