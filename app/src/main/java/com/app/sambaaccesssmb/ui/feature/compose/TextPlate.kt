@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -12,8 +13,9 @@ import com.app.sambaaccesssmb.ui.design.SmbTypography
 import com.app.sambaaccesssmb.ui.design.ThemePreviews
 
 @Composable
-fun TextPlate(text: String = "Sample Text", style: TextStyle, color: Color = MaterialTheme.colorScheme.onSurface) {
+fun TextPlate(modifier: Modifier = Modifier, text: String = "Sample Text", style: TextStyle, color: Color = MaterialTheme.colorScheme.onSurface) {
     Text(
+        modifier = modifier,
         text = text,
         style = style,
         color = color,
@@ -21,8 +23,9 @@ fun TextPlate(text: String = "Sample Text", style: TextStyle, color: Color = Mat
 }
 
 @Composable
-fun DisplayLargeText(text: String = "Sample Text", color: Color = MaterialTheme.colorScheme.onSurface) {
+fun DisplayLargeText(modifier: Modifier = Modifier, text: String = "Sample Text", color: Color = MaterialTheme.colorScheme.onSurface) {
     TextPlate(
+        modifier = modifier,
         text = text,
         style = SmbTypography.displayLarge,
         color = color,
@@ -30,8 +33,9 @@ fun DisplayLargeText(text: String = "Sample Text", color: Color = MaterialTheme.
 }
 
 @Composable
-fun DisplayMediumText(text: String = "Sample Text", color: Color = MaterialTheme.colorScheme.onSurface) {
+fun DisplayMediumText(modifier: Modifier = Modifier, text: String = "Sample Text", color: Color = MaterialTheme.colorScheme.onSurface) {
     Text(
+        modifier = modifier,
         text = text,
         style = SmbTypography.displayMedium,
         color = color,
@@ -40,8 +44,9 @@ fun DisplayMediumText(text: String = "Sample Text", color: Color = MaterialTheme
 }
 
 @Composable
-fun DisplaySmallText(text: String = "Sample Text", color: Color = MaterialTheme.colorScheme.onSurface) {
+fun DisplaySmallText(modifier: Modifier = Modifier, text: String = "Sample Text", color: Color = MaterialTheme.colorScheme.onSurface) {
     Text(
+        modifier = modifier,
         text = text,
         style = SmbTypography.displaySmall,
         color = color,
@@ -50,8 +55,9 @@ fun DisplaySmallText(text: String = "Sample Text", color: Color = MaterialTheme.
 }
 
 @Composable
-fun HeadlineLargeText(text: String = "Sample Text", color: Color = MaterialTheme.colorScheme.onSurface) {
+fun HeadlineLargeText(modifier: Modifier = Modifier, text: String = "Sample Text", color: Color = MaterialTheme.colorScheme.onSurface) {
     Text(
+        modifier = modifier,
         text = text,
         style = SmbTypography.headlineLarge,
         color = color,
@@ -60,8 +66,9 @@ fun HeadlineLargeText(text: String = "Sample Text", color: Color = MaterialTheme
 }
 
 @Composable
-fun HeadlineMediumText(text: String = "Sample Text", color: Color = MaterialTheme.colorScheme.onSurface) {
+fun HeadlineMediumText(modifier: Modifier = Modifier, text: String = "Sample Text", color: Color = MaterialTheme.colorScheme.onSurface) {
     Text(
+        modifier = modifier,
         text = text,
         style = SmbTypography.headlineMedium,
         color = color,
@@ -70,8 +77,9 @@ fun HeadlineMediumText(text: String = "Sample Text", color: Color = MaterialThem
 }
 
 @Composable
-fun HeadlineSmallText(text: String = "Sample Text", color: Color = MaterialTheme.colorScheme.onSurface) {
+fun HeadlineSmallText(modifier: Modifier = Modifier, text: String = "Sample Text", color: Color = MaterialTheme.colorScheme.onSurface) {
     Text(
+        modifier = modifier,
         text = text,
         style = SmbTypography.headlineSmall,
         color = color,
@@ -80,8 +88,9 @@ fun HeadlineSmallText(text: String = "Sample Text", color: Color = MaterialTheme
 }
 
 @Composable
-fun TitleLargeText(text: String = "Sample Text", color: Color = MaterialTheme.colorScheme.onSurface) {
+fun TitleLargeText(modifier: Modifier = Modifier, text: String = "Sample Text", color: Color = MaterialTheme.colorScheme.onSurface) {
     Text(
+        modifier = modifier,
         text = text,
         style = SmbTypography.titleLarge,
         color = color,
@@ -90,8 +99,9 @@ fun TitleLargeText(text: String = "Sample Text", color: Color = MaterialTheme.co
 }
 
 @Composable
-fun TitleMediumText(text: String = "Sample Text", color: Color = MaterialTheme.colorScheme.onSurface) {
+fun TitleMediumText(modifier: Modifier = Modifier, text: String = "Sample Text", color: Color = MaterialTheme.colorScheme.onSurface) {
     Text(
+        modifier = modifier,
         text = text,
         style = SmbTypography.titleMedium,
         color = color,
@@ -100,8 +110,9 @@ fun TitleMediumText(text: String = "Sample Text", color: Color = MaterialTheme.c
 }
 
 @Composable
-fun TitleSmallText(text: String = "Sample Text", color: Color = MaterialTheme.colorScheme.onSurface) {
+fun TitleSmallText(modifier: Modifier = Modifier, text: String = "Sample Text", color: Color = MaterialTheme.colorScheme.onSurface) {
     Text(
+        modifier = modifier,
         text = text,
         style = SmbTypography.titleSmall,
         color = color,
@@ -110,8 +121,9 @@ fun TitleSmallText(text: String = "Sample Text", color: Color = MaterialTheme.co
 }
 
 @Composable
-fun BodyLargeText(text: String = "Sample Text", color: Color = MaterialTheme.colorScheme.onSurface) {
+fun BodyLargeText(modifier: Modifier = Modifier, text: String = "Sample Text", color: Color = MaterialTheme.colorScheme.onSurface) {
     Text(
+        modifier = modifier,
         text = text,
         style = SmbTypography.bodyLarge,
         color = color,
@@ -120,8 +132,9 @@ fun BodyLargeText(text: String = "Sample Text", color: Color = MaterialTheme.col
 }
 
 @Composable
-fun BodyMediumText(text: String = "Sample Text", color: Color = MaterialTheme.colorScheme.onSurface) {
+fun BodyMediumText(modifier: Modifier = Modifier, text: String = "Sample Text", color: Color = MaterialTheme.colorScheme.onSurface) {
     Text(
+        modifier = modifier,
         text = text,
         style = SmbTypography.bodyMedium,
         color = color,
@@ -130,8 +143,9 @@ fun BodyMediumText(text: String = "Sample Text", color: Color = MaterialTheme.co
 }
 
 @Composable
-fun BodySmallText(text: String = "Sample Text", color: Color = MaterialTheme.colorScheme.onSurface) {
+fun BodySmallText(modifier: Modifier = Modifier, text: String = "Sample Text", color: Color = MaterialTheme.colorScheme.onSurface) {
     Text(
+        modifier = modifier,
         text = text,
         style = SmbTypography.bodySmall,
         color = color,
@@ -140,8 +154,9 @@ fun BodySmallText(text: String = "Sample Text", color: Color = MaterialTheme.col
 }
 
 @Composable
-fun LabelLargeText(text: String = "Sample Text", color: Color = MaterialTheme.colorScheme.onSurface) {
+fun LabelLargeText(modifier: Modifier = Modifier, text: String = "Sample Text", color: Color = MaterialTheme.colorScheme.onSurface) {
     Text(
+        modifier = modifier,
         text = text,
         style = SmbTypography.labelLarge,
         color = color,
@@ -150,8 +165,9 @@ fun LabelLargeText(text: String = "Sample Text", color: Color = MaterialTheme.co
 }
 
 @Composable
-fun LabelMediumText(text: String = "Sample Text", color: Color = MaterialTheme.colorScheme.onSurface) {
+fun LabelMediumText(modifier: Modifier = Modifier, text: String = "Sample Text", color: Color = MaterialTheme.colorScheme.onSurface) {
     Text(
+        modifier = modifier,
         text = text,
         style = SmbTypography.labelMedium,
         color = color,
@@ -160,8 +176,9 @@ fun LabelMediumText(text: String = "Sample Text", color: Color = MaterialTheme.c
 }
 
 @Composable
-fun LabelSmallText(text: String = "Sample Text", color: Color = MaterialTheme.colorScheme.onSurface) {
+fun LabelSmallText(modifier: Modifier = Modifier, text: String = "Sample Text", color: Color = MaterialTheme.colorScheme.onSurface) {
     Text(
+        modifier = modifier,
         text = text,
         style = SmbTypography.labelSmall,
         color = color,
