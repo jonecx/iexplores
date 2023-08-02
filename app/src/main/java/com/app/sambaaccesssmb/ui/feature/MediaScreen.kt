@@ -59,10 +59,10 @@ internal fun MediaScreen(
         ) {
             when (displaySmbFileState) {
                 is Loading -> {
-                    LabelLargeText(stringResource(id = R.string.loading_data))
+                    LabelLargeText(text = stringResource(id = R.string.loading_data))
                 }
                 is Downloading -> {
-                    HeadlineLargeText(displaySmbFileState.progress.toString())
+                    HeadlineLargeText(text = displaySmbFileState.progress.toString())
                 }
                 is DownloadCompleted -> {
                     ZoomableImagePlate(mediaUrl = displaySmbFileState.filePath)
@@ -70,7 +70,7 @@ internal fun MediaScreen(
                 is Success,
                 is Error,
                 -> {
-                    LabelLargeText(stringResource(id = R.string.unknown_error))
+                    LabelLargeText(text = stringResource(id = R.string.unknown_error))
                 }
             }
         }

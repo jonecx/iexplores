@@ -42,7 +42,7 @@ fun Waiting(state: FileState) {
                 FileState.Error -> R.string.unknown_error
                 else -> R.string.unknown_error
             }
-            LabelLargeText(stringResource(id = messageStringId))
+            LabelLargeText(text = stringResource(id = messageStringId))
         }
     }
 }
