@@ -2,6 +2,9 @@ package com.app.sambaaccesssmb;
 
 import android.app.Application;
 import com.app.sambaaccesssmb.connection.SMBConnection;
+import com.hierynomus.smbj.SMBClient;
+import com.hierynomus.smbj.SmbConfig;
+import com.hierynomus.smbj.share.DiskShare;
 import dagger.hilt.android.HiltAndroidApp;
 import java.util.Properties;
 import jcifs.CIFSContext;
@@ -15,6 +18,10 @@ import timber.log.Timber;
 public class SMBAccess extends Application {
     private static SMBAccess instance = null;
     private static SMBConnection smbConnectionInstance;
+
+    private static DiskShare diskShareInstance = null;
+
+    private static SMBClient smbClientInstance = null;
 
     private static final String enableSMB2Property = "jcifs.smb.client.enableSMB2";
     private static final String distributedFileSystemProperty = "jcifs.smb.client.dfs.disabled";
@@ -40,6 +47,25 @@ public class SMBAccess extends Application {
 
     public static SMBAccess getInstance() {
         return instance;
+    }
+
+    public static SMBClient getSmbClientInstance() {
+        if (smbClientInstance == null) {
+            SmbConfig smbConfig =
+                    SmbConfig.builder()
+                            .withBufferSize(8 * 1024 * 1024) // 8MB buffer size
+                            .build();
+            smbClientInstance = new SMBClient(smbConfig);
+        }
+        return smbClientInstance;
+    }
+
+    public static DiskShare getDiskShareInstance() {
+        return diskShareInstance;
+    }
+
+    public static void setDiskShareInstance(DiskShare diskShare) {
+        diskShareInstance = diskShare;
     }
 
     public static SMBConnection getSmbConnectionInstance() {

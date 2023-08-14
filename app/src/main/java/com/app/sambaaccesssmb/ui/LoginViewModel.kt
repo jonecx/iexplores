@@ -8,8 +8,10 @@ import com.app.sambaaccesssmb.ui.LoginViewModel.LoginState.Initial
 import com.app.sambaaccesssmb.ui.LoginViewModel.LoginState.Loading
 import com.app.sambaaccesssmb.ui.LoginViewModel.LoginState.LoginInputValidationSuccessful
 import com.app.sambaaccesssmb.ui.LoginViewModel.LoginState.ValidatingLoginInput
+import com.hierynomus.smbj.share.DiskShare
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jcifs.smb.SmbFile
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -24,8 +26,22 @@ class LoginViewModel @Inject constructor(private val loginInputValidationUsecase
 
     val loginUiState: StateFlow<LoginState> = _loginUser
 
+    fun doLogin(serverAddress: String, username: String, password: String, shareName: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            validateLoginInput(serverAddress, username, password).collect { loginState ->
+                when (loginState) {
+                    is Error -> _loginUser.value = loginState
+                    is LoginInputValidationSuccessful -> login(serverAddress, username, password, shareName).collect {
+                        _loginUser.value = it
+                    }
+                    else -> _loginUser.value = loginState
+                }
+            }
+        }
+    }
+
     fun doLogin(serverAddress: String, username: String, password: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             validateLoginInput(serverAddress, username, password).collect { loginState ->
                 when (loginState) {
                     is Error -> _loginUser.value = loginState
@@ -39,6 +55,13 @@ class LoginViewModel @Inject constructor(private val loginInputValidationUsecase
     }
 
     private fun login(serverAddress: String, username: String, password: String) = loginUsecase(serverAddress, username, password)
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5_000),
+            initialValue = Loading,
+        )
+
+    private fun login(serverAddress: String, username: String, password: String, shareName: String) = loginUsecase(serverAddress, username, password, shareName)
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5_000),
@@ -65,6 +88,7 @@ class LoginViewModel @Inject constructor(private val loginInputValidationUsecase
         object Initial : LoginState()
         object LoginInputValidationSuccessful : LoginState()
         data class Success(val smbFile: SmbFile) : LoginState()
+        data class Success2(val diskShare: DiskShare) : LoginState()
         data class Error(val exception: Throwable = Exception(""), val validationKey: LoginInputValidationKey = GeneralErrorKey) : LoginState()
     }
 }

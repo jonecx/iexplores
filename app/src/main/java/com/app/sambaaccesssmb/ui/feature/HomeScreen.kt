@@ -12,7 +12,9 @@ import com.app.sambaaccesssmb.ui.LoginViewModel.LoginState.Initial
 import com.app.sambaaccesssmb.ui.LoginViewModel.LoginState.Loading
 import com.app.sambaaccesssmb.ui.LoginViewModel.LoginState.LoginInputValidationSuccessful
 import com.app.sambaaccesssmb.ui.LoginViewModel.LoginState.Success
+import com.app.sambaaccesssmb.ui.LoginViewModel.LoginState.Success2
 import com.app.sambaaccesssmb.ui.LoginViewModel.LoginState.ValidatingLoginInput
+import com.hierynomus.smbj.share.DiskShare
 import jcifs.smb.SmbFile
 
 @Composable
@@ -34,6 +36,11 @@ internal fun HomeRoute(
             setupSmbConnection((loginState.value as Success).smbFile)
             onNavigateToRemoteFile.invoke()
         }
+        // Login using SMBJ library
+        is Success2 -> LaunchedEffect(loginState.value) {
+            setDiskShareInstance((loginState.value as Success2).diskShare)
+            onNavigateToRemoteFile.invoke()
+        }
     }
 
     BackHandler(true) {
@@ -47,4 +54,8 @@ private fun setupSmbConnection(rootSmb: SmbFile) {
         smbContext = rootSMBFile.context
         isConnected(rootSmb.exists())
     }
+}
+
+private fun setDiskShareInstance(diskShare: DiskShare) {
+    SMBAccess.setDiskShareInstance(diskShare)
 }

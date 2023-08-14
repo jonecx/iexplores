@@ -5,9 +5,11 @@ import com.app.sambaaccesssmb.ui.feature.fvm.FileState
 import com.app.sambaaccesssmb.ui.feature.fvm.FileState.DownloadCompleted
 import com.app.sambaaccesssmb.ui.feature.fvm.FileState.Downloading
 import com.app.sambaaccesssmb.ui.feature.fvm.FileState.Error
+import com.app.sambaaccesssmb.ui.feature.fvm.FileState.Success2
 import com.app.sambaaccesssmb.utils.DirUtil
 import com.app.sambaaccesssmb.utils.getFormattedName
 import com.app.sambaaccesssmb.utils.isAvailableLocally
+import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation
 import jcifs.smb.SmbFile
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -63,6 +65,17 @@ class FileRepository constructor(private val ioDispatcher: CoroutineDispatcher =
             }
         }.getOrElse {
             Timber.d(TAG, it, it.localizedMessage.orEmpty())
+            emit(Error)
+        }
+    }.flowOn(ioDispatcher)
+
+    fun getFileCursor() = flow<FileState> {
+        lateinit var smbFiles: List<FileIdBothDirectoryInformation>
+        runCatching {
+            smbFiles = SMBAccess.getDiskShareInstance().list("")
+        }.onSuccess {
+            emit(Success2(smbFiles))
+        }.onFailure {
             emit(Error)
         }
     }.flowOn(ioDispatcher)

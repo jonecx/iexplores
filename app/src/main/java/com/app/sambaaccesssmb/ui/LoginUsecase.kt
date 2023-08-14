@@ -1,8 +1,12 @@
 package com.app.sambaaccesssmb.ui
 
+import com.app.sambaaccesssmb.SMBAccess
 import com.app.sambaaccesssmb.ui.LoginViewModel.LoginState
 import com.app.sambaaccesssmb.ui.LoginViewModel.LoginState.Error
 import com.app.sambaaccesssmb.ui.LoginViewModel.LoginState.Success
+import com.app.sambaaccesssmb.ui.LoginViewModel.LoginState.Success2
+import com.hierynomus.smbj.auth.AuthenticationContext
+import com.hierynomus.smbj.share.DiskShare
 import jcifs.CIFSContext
 import jcifs.config.PropertyConfiguration
 import jcifs.context.BaseContext
@@ -43,6 +47,25 @@ class LoginUsecase @Inject constructor() {
             rootSMBFile.connect()
         }.onSuccess {
             emit(Success(rootSMBFile))
+        }.onFailure {
+            emit(Error(it))
+        }
+    }.flowOn(Dispatchers.IO)
+
+    operator fun invoke(
+        _serverAddress: String,
+        _username: String,
+        _password: String,
+        _shareName: String,
+    ): Flow<LoginState> = flow<LoginState> {
+        lateinit var diskShare: DiskShare
+        runCatching {
+            val connection = SMBAccess.getSmbClientInstance().connect(_serverAddress)
+            val authenticationContext = AuthenticationContext(_username, _password.toCharArray(), "")
+            val session = connection.authenticate(authenticationContext)
+            diskShare = session.connectShare(_shareName) as DiskShare
+        }.onSuccess {
+            emit(Success2(diskShare))
         }.onFailure {
             emit(Error(it))
         }

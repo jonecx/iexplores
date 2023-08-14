@@ -5,12 +5,14 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.sambaaccesssmb.SMBAccess
+import com.app.sambaaccesssmb.ui.FileCursorUseCase
 import com.app.sambaaccesssmb.ui.FileDownloadUseCase
 import com.app.sambaaccesssmb.ui.feature.fvm.FileState.Error
 import com.app.sambaaccesssmb.ui.feature.fvm.FileState.Loading
 import com.app.sambaaccesssmb.ui.feature.fvm.FileState.Success
 import com.app.sambaaccesssmb.utils.capitalizeFirst
 import com.app.sambaaccesssmb.utils.itemCount
+import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jcifs.smb.SmbFile
 import kotlinx.coroutines.Dispatchers
@@ -26,7 +28,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class FilesViewModel @Inject constructor(private val fileDownloadUseCase: FileDownloadUseCase) : ViewModel() {
+class FilesViewModel @Inject constructor(private val fileDownloadUseCase: FileDownloadUseCase, private val fileCursorUseCase: FileCursorUseCase) : ViewModel() {
 
     companion object {
         private const val TAG = "FilesViewModel"
@@ -36,6 +38,12 @@ class FilesViewModel @Inject constructor(private val fileDownloadUseCase: FileDo
 
     private val _fileDownloadState = MutableStateFlow<FileState>(Loading)
     val fileDownloadState: StateFlow<FileState> = _fileDownloadState.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = Loading,
+    )
+
+    val fileCursor2: StateFlow<FileState> = fileCursorUseCase().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = Loading,
@@ -77,6 +85,7 @@ data class Locus(var fileName: String, val isDirectory: Boolean, val itemCount: 
 
 sealed interface FileState {
     data class Success(val smbFiles: List<Locus>) : FileState
+    data class Success2(val smbFiles: List<FileIdBothDirectoryInformation>) : FileState
     data class Downloading(val progress: Int) : FileState
     data class DownloadCompleted(val filePath: String) : FileState
     object Error : FileState
