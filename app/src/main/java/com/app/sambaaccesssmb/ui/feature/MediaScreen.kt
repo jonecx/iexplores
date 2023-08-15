@@ -72,6 +72,9 @@ internal fun MediaScreen(
                 -> {
                     LabelLargeText(text = stringResource(id = R.string.unknown_error))
                 }
+                else -> {
+                    LabelLargeText(text = stringResource(id = R.string.unknown_error))
+                }
             }
         }
     }

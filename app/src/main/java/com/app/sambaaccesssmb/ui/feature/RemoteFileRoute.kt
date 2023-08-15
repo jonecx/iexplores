@@ -27,11 +27,13 @@ import com.app.sambaaccesssmb.R
 import com.app.sambaaccesssmb.SMBAccess
 import com.app.sambaaccesssmb.ui.feature.compose.DirectoryPlate
 import com.app.sambaaccesssmb.ui.feature.compose.FilePlate
+import com.app.sambaaccesssmb.ui.feature.compose.NetSharePlate
 import com.app.sambaaccesssmb.ui.feature.compose.Waiting
 import com.app.sambaaccesssmb.ui.feature.fvm.FileState
 import com.app.sambaaccesssmb.ui.feature.fvm.FileState.Loading
 import com.app.sambaaccesssmb.ui.feature.fvm.FilesViewModel
 import com.app.sambaaccesssmb.ui.feature.fvm.Locus
+import com.rapid7.client.dcerpc.mssrvs.dto.NetShareInfo1
 import jcifs.smb.SmbFile
 
 @Composable
@@ -46,9 +48,8 @@ internal fun RemoteFileScreen(
     onMediaClick: (SmbFile) -> Unit,
     filesViewModel: FilesViewModel,
 ) {
-    val fileCursor = filesViewModel.fileCursor.collectAsStateWithLifecycle().value
-
-    if (SMBAccess.getSmbConnectionInstance().isConnectionStabled) {
+    if (SMBAccess.getSmbSession()?.isConnected == true) {
+        val netShareState = filesViewModel.netShareState.collectAsStateWithLifecycle().value
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -67,12 +68,12 @@ internal fun RemoteFileScreen(
             },
             content = {
                 Column(modifier = Modifier.padding(it)) {
-                    when (fileCursor) {
+                    when (netShareState) {
                         is FileState.Error,
                         is FileState.Loading,
-                        -> Waiting(fileCursor)
-                        is FileState.Success -> SmbItemGrid(fileCursor.smbFiles, onMediaClick)
-                        else -> Waiting(fileCursor)
+                        -> Waiting(netShareState)
+                        is FileState.NetShareInfoState -> NetShareGrid(netShareState.netShares, onMediaClick)
+                        else -> Waiting(netShareState)
                     }
                 }
             },
@@ -95,6 +96,18 @@ internal fun SmbItemGrid(fileItems: List<Locus>, onMediaClick: (SmbFile) -> Unit
                 true -> DirectoryPlate(directoryItem = item)
                 else -> FilePlate(fileItem = item, onMediaClick)
             }
+        }
+    }
+}
+
+@Composable
+internal fun NetShareGrid(netShareItems: List<NetShareInfo1>, onMediaClick: (SmbFile) -> Unit) {
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(120.dp),
+        contentPadding = PaddingValues(1.dp),
+    ) {
+        items(netShareItems) { item ->
+            NetSharePlate(netShare = item)
         }
     }
 }
