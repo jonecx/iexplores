@@ -13,9 +13,14 @@ import com.app.sambaaccesssmb.utils.DirUtil
 import com.app.sambaaccesssmb.utils.getFormattedName
 import com.app.sambaaccesssmb.utils.isAvailableLocally
 import com.app.sambaaccesssmb.utils.isExcludable
+import com.hierynomus.msdtyp.AccessMask
 import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation
+import com.hierynomus.msfscc.fileinformation.FileStandardInformation
+import com.hierynomus.mssmb2.SMB2CreateDisposition
+import com.hierynomus.mssmb2.SMB2ShareAccess
 import com.hierynomus.smbj.share.DiskShare
 import com.rapid7.client.dcerpc.mssrvs.dto.NetShareInfo1
+import jcifs.internal.smb2.create.Smb2CreateRequest.FILE_SHARE_READ
 import jcifs.smb.SmbFile
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -25,6 +30,7 @@ import kotlinx.coroutines.flow.flowOn
 import timber.log.Timber
 import java.io.BufferedInputStream
 import java.io.FileOutputStream
+import java.util.EnumSet
 import javax.inject.Singleton
 
 @Singleton
@@ -38,6 +44,45 @@ class FileRepository constructor(private val ioDispatcher: CoroutineDispatcher =
         DEVICE(2, R.string.type_device),
         IPC(3, R.string.type_ipc),
     }
+
+    suspend fun getSmbFile(smbFilePath: String) = flow<FileState> {
+        lateinit var downloadedFilePath: String
+        runCatching {
+            val diskShare = SMBAccess.getSmbSession().session.connectShare(smbFilePath.substringBefore("/")) as DiskShare
+            DirUtil.getTempFile(smbFilePath.replace("/", "_"))?.let {
+                downloadedFilePath = it.path
+                val buffer = ByteArray(SMBAccess.getSmbSession().session.connection.negotiatedProtocol.maxReadSize)
+                val fileOutputStream = FileOutputStream(it)
+                val smbFile2bRead = diskShare.openFile(
+                    smbFilePath.substringAfterLast("/"),
+                    EnumSet.of(AccessMask.GENERIC_READ),
+                    null,
+                    setOf(SMB2ShareAccess.FILE_SHARE_READ),
+                    SMB2CreateDisposition.FILE_OPEN,
+                    null,
+                )
+
+                var offset: Long = 0
+                var remaining: Long = smbFile2bRead.getFileInformation(FileStandardInformation::class.java).endOfFile
+                while (remaining > 0) {
+                    val amountToRead = if (remaining > buffer.size) buffer.size else remaining.toInt()
+                    val amountRead = smbFile2bRead.read(buffer, offset, 0, amountToRead)
+                    if (amountToRead == -1) {
+                        remaining = 0
+                    } else {
+                        fileOutputStream.write(buffer, 0, amountRead)
+                        remaining -= amountRead
+                        offset += amountRead
+                    }
+                }
+            }
+        }.onSuccess {
+            emit(DownloadCompleted(downloadedFilePath))
+        }.onFailure {
+            Timber.d(TAG, it, it.localizedMessage.orEmpty())
+            emit(Error)
+        }
+    }.flowOn(ioDispatcher)
 
     suspend fun downloadFile(filePath: String) = flow<FileState> {
         val smbFile = SmbFile(filePath, SMBAccess.getSmbConnectionInstance().smbContext)

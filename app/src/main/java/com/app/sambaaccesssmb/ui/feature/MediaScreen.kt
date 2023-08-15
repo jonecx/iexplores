@@ -22,12 +22,11 @@ import com.app.sambaaccesssmb.ui.feature.fvm.FileState.Error
 import com.app.sambaaccesssmb.ui.feature.fvm.FileState.Loading
 import com.app.sambaaccesssmb.ui.feature.fvm.FileState.Success
 import com.app.sambaaccesssmb.ui.feature.fvm.FilesViewModel
-import jcifs.smb.SmbFile
 
 @Composable
 internal fun MediaRoute(
     onBackClick: () -> Unit,
-    onMediaClick: (SmbFile) -> Unit,
+    onMediaClick: (String) -> Unit,
     mediaUrl: String,
     fileViewModel: FilesViewModel,
 ) {
@@ -37,12 +36,12 @@ internal fun MediaRoute(
 @Composable
 internal fun MediaScreen(
     onBackClick: () -> Unit,
-    onMediaClick: (SmbFile) -> Unit,
+    onMediaClick: (String) -> Unit,
     mediaUrl: String,
     filesViewModel: FilesViewModel,
 ) {
     LaunchedEffect(Unit) {
-        filesViewModel.downloadFile(mediaUrl)
+        filesViewModel.getSmbFile(mediaUrl)
     }
 
     val displaySmbFileState = filesViewModel.fileDownloadState.collectAsState().value

@@ -81,18 +81,26 @@ class FilesViewModel @Inject constructor(private val fileDownloadUseCase: FileDo
             initialValue = Loading,
         )
 
-    fun downloadFile(filePath: String) {
+/*    fun downloadFile(filePath: String) {
         viewModelScope.launch {
             fileDownloadUseCase(filePath).collectLatest {
                 _fileDownloadState.value = it
             }
         }
-    }
+    }*/
 
     fun getFileCursor(shareName: String) {
         viewModelScope.launch {
             fileCursorUseCase(shareName).collectLatest {
                 _fileCursorState.value = it
+            }
+        }
+    }
+
+    fun getSmbFile(smbFilePath: String) {
+        viewModelScope.launch {
+            fileDownloadUseCase(smbFilePath).collectLatest {
+                _fileDownloadState.value = it
             }
         }
     }

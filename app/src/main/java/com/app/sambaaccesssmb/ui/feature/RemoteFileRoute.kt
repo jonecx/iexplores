@@ -29,14 +29,12 @@ import com.app.sambaaccesssmb.ui.feature.compose.DirectoryPlate
 import com.app.sambaaccesssmb.ui.feature.compose.FilePlate
 import com.app.sambaaccesssmb.ui.feature.compose.Waiting
 import com.app.sambaaccesssmb.ui.feature.fvm.FileState
-import com.app.sambaaccesssmb.ui.feature.fvm.FileState.Loading
 import com.app.sambaaccesssmb.ui.feature.fvm.FilesViewModel
 import com.app.sambaaccesssmb.utils.isDirectory
 import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation
-import jcifs.smb.SmbFile
 
 @Composable
-internal fun RemoteFileRoute(onNavigateToRemoteFile: () -> Unit, onMediaClick: (SmbFile) -> Unit, shareName: String, fileViewModel: FilesViewModel) {
+internal fun RemoteFileRoute(onNavigateToRemoteFile: () -> Unit, onMediaClick: (String) -> Unit, shareName: String, fileViewModel: FilesViewModel) {
     RemoteFileScreen(onNavigateToRemoteFile, onMediaClick, shareName, fileViewModel)
 }
 
@@ -44,7 +42,7 @@ internal fun RemoteFileRoute(onNavigateToRemoteFile: () -> Unit, onMediaClick: (
 @Composable
 internal fun RemoteFileScreen(
     onNavigateToHomeScreen: () -> Unit,
-    onMediaClick: (SmbFile) -> Unit,
+    onMediaClick: (String) -> Unit,
     shareName: String,
     filesViewModel: FilesViewModel,
 ) {
@@ -72,10 +70,10 @@ internal fun RemoteFileScreen(
             content = {
                 Column(modifier = Modifier.padding(it)) {
                     when (fileCursorState) {
+                        is FileState.CursorState -> SmbItemGrid(fileCursorState.smbItems, shareName, onMediaClick)
                         is FileState.Error,
                         is FileState.Loading,
                         -> Waiting(fileCursorState)
-                        is FileState.CursorState -> SmbItemGrid(fileCursorState.smbItems, onMediaClick)
                         else -> Waiting(fileCursorState)
                     }
                 }
@@ -89,7 +87,7 @@ internal fun RemoteFileScreen(
 }
 
 @Composable
-internal fun SmbItemGrid(smbItems: List<FileIdBothDirectoryInformation>, onMediaClick: (SmbFile) -> Unit) {
+internal fun SmbItemGrid(smbItems: List<FileIdBothDirectoryInformation>, shareName: String, onMediaClick: (String) -> Unit) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(120.dp),
         contentPadding = PaddingValues(1.dp),
@@ -97,7 +95,7 @@ internal fun SmbItemGrid(smbItems: List<FileIdBothDirectoryInformation>, onMedia
         items(smbItems) { item ->
             when (item.isDirectory()) {
                 true -> DirectoryPlate(smbItem = item)
-                else -> FilePlate(smbItem = item, onMediaClick)
+                else -> FilePlate(smbItem = item, shareName, onMediaClick)
             }
         }
     }

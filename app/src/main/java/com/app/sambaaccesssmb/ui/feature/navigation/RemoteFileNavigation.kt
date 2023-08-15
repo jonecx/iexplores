@@ -6,7 +6,6 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.app.sambaaccesssmb.ui.feature.RemoteFileRoute
 import com.app.sambaaccesssmb.ui.feature.fvm.FilesViewModel
-import jcifs.smb.SmbFile
 
 const val remoteFileScreenRoute = "remoteFileScreenRoute/{shareName}"
 
@@ -21,7 +20,7 @@ fun NavController.navigateToRemoteFileScreen(shareName: String) {
 
 fun NavGraphBuilder.remoteFileScreen(
     onNavigateToHomeScreen: () -> Unit,
-    onMediaClick: (SmbFile) -> Unit,
+    onMediaClick: (String) -> Unit,
     nestedGraphs: NavGraphBuilder.() -> Unit,
     fileViewModel: FilesViewModel,
 ) {

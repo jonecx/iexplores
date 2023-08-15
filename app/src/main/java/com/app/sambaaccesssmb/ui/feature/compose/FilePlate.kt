@@ -10,15 +10,14 @@ import androidx.compose.ui.unit.dp
 import com.app.sambaaccesssmb.utils.isImage
 import com.app.sambaaccesssmb.utils.isVideo
 import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation
-import jcifs.smb.SmbFile
 
 @Composable
-internal fun FilePlate(smbItem: FileIdBothDirectoryInformation, onMediaClick: (SmbFile) -> Unit) {
+internal fun FilePlate(smbItem: FileIdBothDirectoryInformation, shareName: String, onMediaClick: (String) -> Unit) {
     Column(
         modifier = Modifier
             .size(120.dp)
             .padding(2.dp)
-            .clickable { /*onMediaClick(SmbFile(smbItem.shortName)) */ },
+            .clickable { onMediaClick("$shareName/${smbItem.fileName}") },
     ) {
         when {
             smbItem.isImage() -> ImagePlate(smbItem = smbItem)

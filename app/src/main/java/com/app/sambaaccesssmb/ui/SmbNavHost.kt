@@ -43,7 +43,6 @@ fun SmbNavHost(
         remoteFileScreen(
             onNavigateToHomeScreen = { navController.navigateToHomeScreen() },
             onMediaClick = { smbFile ->
-//                fileViewModel.selectedSmbFile = smbFile
                 navController.navigateToMedia(smbFile)
             },
             nestedGraphs = {
