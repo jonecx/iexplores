@@ -4,28 +4,22 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.media.ThumbnailUtils
-import android.net.Uri
 import android.os.Build.VERSION_CODES.P
 import android.util.Size
 import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
-import coil.decode.ContentMetadata
-import coil.decode.DataSource.DISK
 import coil.decode.DataSource.MEMORY
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
-import coil.decode.ImageSource
 import coil.decode.VideoFrameDecoder
 import coil.disk.DiskCache
 import coil.fetch.DrawableResult
 import coil.fetch.FetchResult
 import coil.fetch.Fetcher
-import coil.fetch.SourceResult
 import coil.request.Options
 import com.app.sambaaccesssmb.utils.Build
 import com.app.sambaaccesssmb.utils.DirUtil
 import com.app.sambaaccesssmb.utils.getFormattedName
-import com.app.sambaaccesssmb.utils.isVideo
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,7 +28,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import jcifs.smb.SmbFile
 import kotlinx.coroutines.Dispatchers
 import okio.buffer
-import okio.source
 import java.io.FileOutputStream
 import java.io.InputStream
 
@@ -74,7 +67,13 @@ class SmbFileFetcher(
         val inputStream = data.inputStream
 
         val tempFileName = data.getFormattedName()
-        return if (data.isVideo()) {
+        return DrawableResult(
+            drawable = BitmapDrawable(options.context.resources, getThumbnail(tempFileName, inputStream)),
+            isSampled = false,
+            dataSource = MEMORY,
+        )
+
+/*        return if (data.isVideo()) {
             val thumbnailBitmap = getThumbnail(tempFileName, inputStream)
             return DrawableResult(
                 drawable = BitmapDrawable(options.context.resources, thumbnailBitmap),
@@ -91,7 +90,7 @@ class SmbFileFetcher(
                 mimeType = null, // Let Coil handle the MIME type
                 dataSource = DISK,
             )
-        }
+        }*/
     }
 
     private fun getThumbnail(fileName: String, inputStream: InputStream): Bitmap {

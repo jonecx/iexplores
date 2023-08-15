@@ -45,7 +45,8 @@ class FilesViewModel @Inject constructor(private val fileDownloadUseCase: FileDo
         initialValue = Loading,
     )
 
-    val fileCursor2: StateFlow<FileState> = fileCursorUseCase().stateIn(
+    private val _fileCursorState = MutableStateFlow<FileState>(Loading)
+    val fileCursorState: StateFlow<FileState> = _fileCursorState.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = Loading,
@@ -87,13 +88,21 @@ class FilesViewModel @Inject constructor(private val fileDownloadUseCase: FileDo
             }
         }
     }
+
+    fun getFileCursor(shareName: String) {
+        viewModelScope.launch {
+            fileCursorUseCase(shareName).collectLatest {
+                _fileCursorState.value = it
+            }
+        }
+    }
 }
 
 data class Locus(var fileName: String, val isDirectory: Boolean, val itemCount: String = "", val originalFile: SmbFile)
 
 sealed interface FileState {
     data class Success(val smbFiles: List<Locus>) : FileState
-    data class CursorState(val smbFiles: List<FileIdBothDirectoryInformation>) : FileState
+    data class CursorState(val smbItems: List<FileIdBothDirectoryInformation>) : FileState
     data class NetShareInfoState(val netShares: List<NetShareInfo1>) : FileState
     data class Downloading(val progress: Int) : FileState
     data class DownloadCompleted(val filePath: String) : FileState

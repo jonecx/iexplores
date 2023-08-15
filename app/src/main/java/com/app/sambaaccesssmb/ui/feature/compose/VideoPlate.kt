@@ -12,16 +12,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.app.sambaaccesssmb.ui.feature.fvm.Locus
+import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation
 
 @Composable
-internal fun VideoPlate(fileItem: Locus) {
+internal fun VideoPlate(smbItem: FileIdBothDirectoryInformation) {
     Box(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.surfaceVariant)
             .fillMaxSize(),
     ) {
-        ImagePlate(fileItem = fileItem)
+        ImagePlate(smbItem = smbItem)
         Icon(
             Filled.PlayCircle,
             contentDescription = null,

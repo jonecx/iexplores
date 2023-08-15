@@ -12,7 +12,9 @@ import com.app.sambaaccesssmb.ui.feature.fvm.FileState.NetShareInfoState
 import com.app.sambaaccesssmb.utils.DirUtil
 import com.app.sambaaccesssmb.utils.getFormattedName
 import com.app.sambaaccesssmb.utils.isAvailableLocally
+import com.app.sambaaccesssmb.utils.isExcludable
 import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation
+import com.hierynomus.smbj.share.DiskShare
 import com.rapid7.client.dcerpc.mssrvs.dto.NetShareInfo1
 import jcifs.smb.SmbFile
 import kotlinx.coroutines.CoroutineDispatcher
@@ -80,10 +82,11 @@ class FileRepository constructor(private val ioDispatcher: CoroutineDispatcher =
         }
     }.flowOn(ioDispatcher)
 
-    fun getFileCursor() = flow<FileState> {
+    fun getFileCursor(shareName: String) = flow<FileState> {
         lateinit var smbFiles: List<FileIdBothDirectoryInformation>
         runCatching {
-            smbFiles = SMBAccess.getDiskShareInstance().list("")
+            val diskShare = SMBAccess.getSmbSession().session.connectShare(shareName) as DiskShare
+            smbFiles = diskShare.list("").filter { !it.isExcludable() }
         }.onSuccess {
             emit(CursorState(smbFiles))
         }.onFailure {

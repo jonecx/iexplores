@@ -12,14 +12,16 @@ import com.app.sambaaccesssmb.ui.feature.navigation.homeScreen
 import com.app.sambaaccesssmb.ui.feature.navigation.mediaScreen
 import com.app.sambaaccesssmb.ui.feature.navigation.navigateToHomeScreen
 import com.app.sambaaccesssmb.ui.feature.navigation.navigateToMedia
+import com.app.sambaaccesssmb.ui.feature.navigation.navigateToNetShareScreen
 import com.app.sambaaccesssmb.ui.feature.navigation.navigateToRemoteFileScreen
+import com.app.sambaaccesssmb.ui.feature.navigation.netShareScreen
+import com.app.sambaaccesssmb.ui.feature.navigation.netShareScreenRoute
 import com.app.sambaaccesssmb.ui.feature.navigation.remoteFileScreen
-import com.app.sambaaccesssmb.ui.feature.navigation.remoteFileScreenRoute
 
 @Composable
 fun SmbNavHost(
     navController: NavHostController,
-    startDestination: String = remoteFileScreenRoute,
+    startDestination: String = netShareScreenRoute,
 ) {
     val context = LocalContext.current
     val fileViewModel: FilesViewModel = hiltViewModel()
@@ -29,7 +31,14 @@ fun SmbNavHost(
     ) {
         homeScreen(
             onBackClick = { (context as ComponentActivity).finish() },
-            onNavigateToRemoteFile = { navController.navigateToRemoteFileScreen() },
+            onNavigateToShareScreen = { navController.navigateToNetShareScreen() },
+        )
+        netShareScreen(
+            onNavigateToHomeScreen = { navController.navigateToHomeScreen() },
+            onShareClick = { shareName ->
+                navController.navigateToRemoteFileScreen(shareName)
+            },
+            fileViewModel,
         )
         remoteFileScreen(
             onNavigateToHomeScreen = { navController.navigateToHomeScreen() },

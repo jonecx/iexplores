@@ -3,6 +3,8 @@ package com.app.sambaaccesssmb.utils
 import android.net.InetAddresses.isNumericAddress
 import android.os.Build.VERSION_CODES.Q
 import android.util.Patterns
+import com.hierynomus.msfscc.FileAttributes
+import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation
 import jcifs.smb.SmbFile
 import timber.log.Timber
 import java.io.File
@@ -20,6 +22,18 @@ object DirUtil {
             null
         }
     }
+}
+
+fun FileIdBothDirectoryInformation.isDirectory(): Boolean {
+    return (fileAttributes and FileAttributes.FILE_ATTRIBUTE_DIRECTORY.value) != 0L
+}
+
+fun FileIdBothDirectoryInformation.isHidden(): Boolean {
+    return (fileAttributes and FileAttributes.FILE_ATTRIBUTE_HIDDEN.value) != 0L
+}
+
+fun FileIdBothDirectoryInformation.isExcludable(): Boolean {
+    return fileName.startsWith(".") && shortName.isBlank() || isHidden()
 }
 
 fun String?.isValidAddress(): Boolean {
@@ -50,14 +64,14 @@ fun SmbFile.itemCount(directory: Boolean): String {
 
 private fun getMimeType(path: String) = URLConnection.guessContentTypeFromName(path).orEmpty()
 
-fun SmbFile.isImage(): Boolean {
-    val mimeType = getMimeType(this.path)
+fun FileIdBothDirectoryInformation.isImage(): Boolean {
+    val mimeType = getMimeType(fileName)
     return mimeType.contains("image")
 }
 
-fun SmbFile.isGif() = this.isImage() && getMimeType(this.path).contains("gif")
+fun FileIdBothDirectoryInformation.isGif() = this.isImage() && getMimeType(fileName).contains("gif")
 
-fun SmbFile.isVideo() = getMimeType(this.path).contains("video")
+fun FileIdBothDirectoryInformation.isVideo() = getMimeType(fileName).contains("video")
 
 fun SmbFile.getFormattedName() = this.url.path.replace("/", "_")
 

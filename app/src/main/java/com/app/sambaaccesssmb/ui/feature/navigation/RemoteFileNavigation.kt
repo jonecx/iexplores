@@ -8,11 +8,11 @@ import com.app.sambaaccesssmb.ui.feature.RemoteFileRoute
 import com.app.sambaaccesssmb.ui.feature.fvm.FilesViewModel
 import jcifs.smb.SmbFile
 
-const val remoteFileScreenRoute = "remoteFileScreenRoute"
+const val remoteFileScreenRoute = "remoteFileScreenRoute/{shareName}"
 
-fun NavController.navigateToRemoteFileScreen() {
+fun NavController.navigateToRemoteFileScreen(shareName: String) {
     this.navigate(
-        remoteFileScreenRoute,
+        "remoteFileScreenRoute/$shareName",
         NavOptions.Builder()
             .setPopUpTo(remoteFileScreenRoute, inclusive = true)
             .build(),
@@ -26,7 +26,8 @@ fun NavGraphBuilder.remoteFileScreen(
     fileViewModel: FilesViewModel,
 ) {
     composable(route = remoteFileScreenRoute) {
-        RemoteFileRoute(onNavigateToHomeScreen, onMediaClick, fileViewModel)
+        val shareName = it.arguments?.getString("shareName").orEmpty()
+        RemoteFileRoute(onNavigateToHomeScreen, onMediaClick, shareName, fileViewModel)
     }
     nestedGraphs()
 }

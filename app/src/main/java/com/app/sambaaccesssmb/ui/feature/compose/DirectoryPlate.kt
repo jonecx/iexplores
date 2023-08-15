@@ -22,10 +22,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.app.sambaaccesssmb.ui.feature.fvm.Locus
+import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation
 
 @Composable
-internal fun DirectoryPlate(directoryItem: Locus) {
+internal fun DirectoryPlate(smbItem: FileIdBothDirectoryInformation) {
     val context = LocalContext.current
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
@@ -36,7 +36,7 @@ internal fun DirectoryPlate(directoryItem: Locus) {
             .background(MaterialTheme.colorScheme.surfaceVariant)
             .clickable {
                 Toast
-                    .makeText(context, directoryItem.originalFile.name, Toast.LENGTH_SHORT)
+                    .makeText(context, smbItem.fileName, Toast.LENGTH_SHORT)
                     .show()
             },
     ) {
@@ -44,7 +44,7 @@ internal fun DirectoryPlate(directoryItem: Locus) {
             Text(
                 modifier = Modifier
                     .padding(4.dp),
-                text = directoryItem.fileName,
+                text = smbItem.fileName,
                 style = MaterialTheme.typography.titleSmall,
                 maxLines = 4,
                 overflow = TextOverflow.Ellipsis,

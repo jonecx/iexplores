@@ -7,23 +7,23 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.app.sambaaccesssmb.ui.feature.fvm.Locus
 import com.app.sambaaccesssmb.utils.isImage
 import com.app.sambaaccesssmb.utils.isVideo
+import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation
 import jcifs.smb.SmbFile
 
 @Composable
-internal fun FilePlate(fileItem: Locus, onMediaClick: (SmbFile) -> Unit) {
+internal fun FilePlate(smbItem: FileIdBothDirectoryInformation, onMediaClick: (SmbFile) -> Unit) {
     Column(
         modifier = Modifier
             .size(120.dp)
             .padding(2.dp)
-            .clickable { onMediaClick(fileItem.originalFile) },
+            .clickable { /*onMediaClick(SmbFile(smbItem.shortName)) */ },
     ) {
         when {
-            fileItem.originalFile.isImage() -> ImagePlate(fileItem = fileItem)
-            fileItem.originalFile.isVideo() -> VideoPlate(fileItem)
-            else -> OtherPlate(fileItem)
+            smbItem.isImage() -> ImagePlate(smbItem = smbItem)
+            smbItem.isVideo() -> VideoPlate(smbItem)
+            else -> OtherPlate(smbItem)
         }
     }
 }

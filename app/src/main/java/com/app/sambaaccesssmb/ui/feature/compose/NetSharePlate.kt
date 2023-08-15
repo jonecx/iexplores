@@ -2,6 +2,7 @@ package com.app.sambaaccesssmb.ui.feature.compose
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -24,14 +25,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.app.sambaaccesssmb.R
+import com.app.sambaaccesssmb.ui.feature.fvm.FilesViewModel
 import com.rapid7.client.dcerpc.mssrvs.dto.NetShareInfo1
 
 @Composable
-fun NetSharePlate(netShare: NetShareInfo1) {
+fun NetSharePlate(netShare: NetShareInfo1, onShareClick: (String) -> Unit, fileViewModel: FilesViewModel) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(8.dp),
+            .padding(8.dp)
+            .clickable { onShareClick(netShare.netName) },
         contentAlignment = Alignment.Center,
     ) {
         Column(
