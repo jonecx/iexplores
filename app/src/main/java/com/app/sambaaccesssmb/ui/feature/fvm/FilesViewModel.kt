@@ -97,9 +97,9 @@ class FilesViewModel @Inject constructor(private val fileDownloadUseCase: FileDo
         }
     }
 
-    fun getSmbFile(smbFilePath: String) {
+    fun getSmbFile(shareName: String, smbFilePath: String, smbFileSize: Long) {
         viewModelScope.launch {
-            fileDownloadUseCase(smbFilePath).collectLatest {
+            fileDownloadUseCase(shareName, smbFilePath, smbFileSize).collectLatest {
                 _fileDownloadState.value = it
             }
         }

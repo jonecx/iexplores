@@ -45,12 +45,18 @@ class FileRepository constructor(private val ioDispatcher: CoroutineDispatcher =
         IPC(3, R.string.type_ipc),
     }
 
-    suspend fun getSmbFile(smbFilePath: String) = flow<FileState> {
+    suspend fun getSmbFile(shareName: String, smbFilePath: String, smbFileSize: Long) = flow<FileState> {
         lateinit var downloadedFilePath: String
         runCatching {
-            val diskShare = SMBAccess.getSmbSession().session.connectShare(smbFilePath.substringBefore("/")) as DiskShare
-            DirUtil.getTempFile(smbFilePath.replace("/", "_"))?.let {
+            DirUtil.getTempFile(smbFilePath.getFormattedName())?.let {
                 downloadedFilePath = it.path
+
+                if (downloadedFilePath.isAvailableLocally(smbFileSize)) {
+                    emit(DownloadCompleted(downloadedFilePath))
+                    return@flow
+                }
+
+                val diskShare = SMBAccess.getSmbSession().session.connectShare(shareName) as DiskShare
                 val buffer = ByteArray(SMBAccess.getSmbSession().session.connection.negotiatedProtocol.maxReadSize)
                 val fileOutputStream = FileOutputStream(it)
                 val smbFile2bRead = diskShare.openFile(

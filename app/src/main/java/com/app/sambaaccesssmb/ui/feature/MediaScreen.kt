@@ -26,22 +26,24 @@ import com.app.sambaaccesssmb.ui.feature.fvm.FilesViewModel
 @Composable
 internal fun MediaRoute(
     onBackClick: () -> Unit,
-    onMediaClick: (String) -> Unit,
-    mediaUrl: String,
+    shareName: String,
+    smbFilePath: String,
+    smbFileSize: Long,
     fileViewModel: FilesViewModel,
 ) {
-    MediaScreen(onBackClick = onBackClick, onMediaClick = onMediaClick, mediaUrl, fileViewModel)
+    MediaScreen(onBackClick = onBackClick, shareName, smbFilePath, smbFileSize, fileViewModel)
 }
 
 @Composable
 internal fun MediaScreen(
     onBackClick: () -> Unit,
-    onMediaClick: (String) -> Unit,
-    mediaUrl: String,
+    shareName: String,
+    smbFilePath: String,
+    smbFileSize: Long,
     filesViewModel: FilesViewModel,
 ) {
     LaunchedEffect(Unit) {
-        filesViewModel.getSmbFile(mediaUrl)
+        filesViewModel.getSmbFile(shareName, smbFilePath, smbFileSize)
     }
 
     val displaySmbFileState = filesViewModel.fileDownloadState.collectAsState().value

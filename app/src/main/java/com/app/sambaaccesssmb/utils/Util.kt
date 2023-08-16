@@ -74,6 +74,12 @@ fun FileIdBothDirectoryInformation.isGif() = this.isImage() && getMimeType(fileN
 fun FileIdBothDirectoryInformation.isVideo() = getMimeType(fileName).contains("video")
 
 fun SmbFile.getFormattedName() = this.url.path.replace("/", "_")
+fun String.getFormattedName() = this.replace("/", "_")
+
+fun String.isAvailableLocally(smbFileSize: Long): Boolean {
+    val localFile = File(this)
+    return localFile.isFile && localFile.length() == smbFileSize
+}
 
 fun SmbFile.isAvailableLocally(): Boolean {
     val localFile = DirUtil.getTempFile(this.getFormattedName())

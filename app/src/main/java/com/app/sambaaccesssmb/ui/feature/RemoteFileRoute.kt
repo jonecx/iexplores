@@ -34,7 +34,7 @@ import com.app.sambaaccesssmb.utils.isDirectory
 import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation
 
 @Composable
-internal fun RemoteFileRoute(onNavigateToRemoteFile: () -> Unit, onMediaClick: (String) -> Unit, shareName: String, fileViewModel: FilesViewModel) {
+internal fun RemoteFileRoute(onNavigateToRemoteFile: () -> Unit, onMediaClick: (String, String, Long) -> Unit, shareName: String, fileViewModel: FilesViewModel) {
     RemoteFileScreen(onNavigateToRemoteFile, onMediaClick, shareName, fileViewModel)
 }
 
@@ -42,7 +42,7 @@ internal fun RemoteFileRoute(onNavigateToRemoteFile: () -> Unit, onMediaClick: (
 @Composable
 internal fun RemoteFileScreen(
     onNavigateToHomeScreen: () -> Unit,
-    onMediaClick: (String) -> Unit,
+    onMediaClick: (String, String, Long) -> Unit,
     shareName: String,
     filesViewModel: FilesViewModel,
 ) {
@@ -87,7 +87,7 @@ internal fun RemoteFileScreen(
 }
 
 @Composable
-internal fun SmbItemGrid(smbItems: List<FileIdBothDirectoryInformation>, shareName: String, onMediaClick: (String) -> Unit) {
+internal fun SmbItemGrid(smbItems: List<FileIdBothDirectoryInformation>, shareName: String, onMediaClick: (String, String, Long) -> Unit) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(120.dp),
         contentPadding = PaddingValues(1.dp),

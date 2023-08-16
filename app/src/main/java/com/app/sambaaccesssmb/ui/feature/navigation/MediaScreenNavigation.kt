@@ -11,27 +11,34 @@ import com.app.sambaaccesssmb.ui.feature.MediaRoute
 import com.app.sambaaccesssmb.ui.feature.fvm.FilesViewModel
 
 @VisibleForTesting
-internal const val mediaIdArg = "mediaId"
+internal const val shareNamedArg = "shareName"
+internal const val smbFilePathArg = "smbFilePath"
+internal const val smbFileSizeArg = "smbFileSize"
 
 const val mediaScreenRoute = "mediaScreenRoute"
 
-fun NavController.navigateToMedia(smbFile: String) {
-    val encodedMediaId = Uri.encode(smbFile)
-    this.navigate("$mediaScreenRoute/$encodedMediaId")
+fun NavController.navigateToMedia(shareName: String, smbFilePath: String, smbFileSize: Long) {
+    val encodedShareName = Uri.encode(shareName)
+    val encodedSmbFilePath = Uri.encode(smbFilePath)
+    val encodedSmbFileSize = Uri.encode(smbFileSize.toString())
+    this.navigate("$mediaScreenRoute/$encodedShareName/$encodedSmbFilePath/$encodedSmbFileSize")
 }
 
 fun NavGraphBuilder.mediaScreen(
     onBackClick: () -> Unit,
-    onMediaClick: (String) -> Unit,
     fileViewModel: FilesViewModel,
 ) {
     composable(
-        route = "$mediaScreenRoute/{$mediaIdArg}",
+        route = "$mediaScreenRoute/{$shareNamedArg}/{$smbFilePathArg}/{$smbFileSizeArg}",
         arguments = listOf(
-            navArgument(mediaIdArg) { type = NavType.StringType },
+            navArgument(shareNamedArg) { type = NavType.StringType },
+            navArgument(smbFilePathArg) { type = NavType.StringType },
+            navArgument(smbFileSizeArg) { type = NavType.LongType },
         ),
     ) {
-        val mediaUrl = it.arguments?.getString(mediaIdArg).orEmpty()
-        MediaRoute(onBackClick = onBackClick, onMediaClick = onMediaClick, mediaUrl, fileViewModel)
+        val shareName = it.arguments?.getString(shareNamedArg).orEmpty()
+        val smbFilePath = it.arguments?.getString(smbFilePathArg).orEmpty()
+        val smbFileSize = it.arguments?.getLong(smbFileSizeArg) ?: 0L
+        MediaRoute(onBackClick = onBackClick, shareName, smbFilePath, smbFileSize, fileViewModel)
     }
 }

@@ -20,7 +20,7 @@ fun NavController.navigateToRemoteFileScreen(shareName: String) {
 
 fun NavGraphBuilder.remoteFileScreen(
     onNavigateToHomeScreen: () -> Unit,
-    onMediaClick: (String) -> Unit,
+    onMediaClick: (String, String, Long) -> Unit,
     nestedGraphs: NavGraphBuilder.() -> Unit,
     fileViewModel: FilesViewModel,
 ) {
