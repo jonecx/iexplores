@@ -81,6 +81,14 @@ fun String.isAvailableLocally(smbFileSize: Long): Boolean {
     return localFile.isFile && localFile.length() == smbFileSize
 }
 
+fun String.shareNameFromPath(): String {
+    return this.substringBefore("/")
+}
+
+fun String.parseSmbPathFromSharePath(): String {
+    return this.takeIf { it.contains("/") }?.substringAfter("/").orEmpty()
+}
+
 fun SmbFile.isAvailableLocally(): Boolean {
     val localFile = DirUtil.getTempFile(this.getFormattedName())
     return localFile?.let {

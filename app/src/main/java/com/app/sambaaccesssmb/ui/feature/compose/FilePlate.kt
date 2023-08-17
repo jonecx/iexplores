@@ -12,12 +12,12 @@ import com.app.sambaaccesssmb.utils.isVideo
 import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation
 
 @Composable
-internal fun FilePlate(smbItem: FileIdBothDirectoryInformation, shareName: String, onMediaClick: (String, String, Long) -> Unit) {
+internal fun FilePlate(smbItem: FileIdBothDirectoryInformation, shareName: String, onSmbFileClick: (String, String, Long) -> Unit) {
     Column(
         modifier = Modifier
             .size(120.dp)
             .padding(2.dp)
-            .clickable { onMediaClick(shareName, smbItem.fileName, smbItem.endOfFile) },
+            .clickable { onSmbFileClick(shareName, smbItem.fileName, smbItem.endOfFile) },
     ) {
         when {
             smbItem.isImage() -> ImagePlate(smbItem = smbItem)

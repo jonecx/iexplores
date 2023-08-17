@@ -38,6 +38,8 @@ class FilesViewModel @Inject constructor(private val fileDownloadUseCase: FileDo
 
     private val sampleFolderName = "Sample"
 
+    var currentShareName = ""
+
     private val _fileDownloadState = MutableStateFlow<FileState>(Loading)
     val fileDownloadState: StateFlow<FileState> = _fileDownloadState.stateIn(
         scope = viewModelScope,

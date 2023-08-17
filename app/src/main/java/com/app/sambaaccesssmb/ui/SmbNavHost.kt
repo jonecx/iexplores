@@ -41,8 +41,11 @@ fun SmbNavHost(
         )
         remoteFileScreen(
             onNavigateToHomeScreen = { navController.navigateToHomeScreen() },
-            onMediaClick = { shareName, smbFilePath, smbFileSize ->
+            onSmbFileClick = { shareName, smbFilePath, smbFileSize ->
                 navController.navigateToMedia(shareName, smbFilePath, smbFileSize)
+            },
+            onDirectoryClick = { directoryName ->
+                navController.navigateToRemoteFileScreen(directoryName)
             },
             nestedGraphs = {
                 mediaScreen(

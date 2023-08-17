@@ -5,7 +5,6 @@ import com.app.sambaaccesssmb.connection.SMBConnection;
 import com.app.sambaaccesssmb.model.SmbSession;
 import com.hierynomus.smbj.SMBClient;
 import com.hierynomus.smbj.SmbConfig;
-import com.hierynomus.smbj.share.DiskShare;
 import dagger.hilt.android.HiltAndroidApp;
 import java.util.Properties;
 import jcifs.CIFSContext;
@@ -19,8 +18,6 @@ import timber.log.Timber;
 public class SMBAccess extends Application {
     private static SMBAccess instance = null;
     private static SMBConnection smbConnectionInstance;
-
-    private static DiskShare diskShareInstance = null;
 
     private static SMBClient smbClientInstance = null;
 
@@ -63,20 +60,12 @@ public class SMBAccess extends Application {
         return smbClientInstance;
     }
 
-    public static DiskShare getDiskShareInstance() {
-        return diskShareInstance;
-    }
-
     public static SmbSession getSmbSession() {
         return smbSession;
     }
 
     public static void setSmbSession(SmbSession smbSession) {
         SMBAccess.smbSession = smbSession;
-    }
-
-    public static void setDiskShareInstance(DiskShare diskShare) {
-        diskShareInstance = diskShare;
     }
 
     public static SMBConnection getSmbConnectionInstance() {

@@ -13,6 +13,8 @@ import com.app.sambaaccesssmb.utils.DirUtil
 import com.app.sambaaccesssmb.utils.getFormattedName
 import com.app.sambaaccesssmb.utils.isAvailableLocally
 import com.app.sambaaccesssmb.utils.isExcludable
+import com.app.sambaaccesssmb.utils.parseSmbPathFromSharePath
+import com.app.sambaaccesssmb.utils.shareNameFromPath
 import com.hierynomus.msdtyp.AccessMask
 import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation
 import com.hierynomus.msfscc.fileinformation.FileStandardInformation
@@ -20,7 +22,6 @@ import com.hierynomus.mssmb2.SMB2CreateDisposition
 import com.hierynomus.mssmb2.SMB2ShareAccess
 import com.hierynomus.smbj.share.DiskShare
 import com.rapid7.client.dcerpc.mssrvs.dto.NetShareInfo1
-import jcifs.internal.smb2.create.Smb2CreateRequest.FILE_SHARE_READ
 import jcifs.smb.SmbFile
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -45,10 +46,15 @@ class FileRepository constructor(private val ioDispatcher: CoroutineDispatcher =
         IPC(3, R.string.type_ipc),
     }
 
-    suspend fun getSmbFile(shareName: String, smbFilePath: String, smbFileSize: Long) = flow<FileState> {
+    private fun errorLogger(throwable: Throwable) {
+        Timber.d(TAG, throwable, throwable.localizedMessage.orEmpty())
+    }
+
+    suspend fun getSmbFile(shareName: String, smbFilePath1: String, smbFileSize: Long) = flow<FileState> {
         lateinit var downloadedFilePath: String
+        val filePath = "$shareName/$smbFilePath1"
         runCatching {
-            DirUtil.getTempFile(smbFilePath.getFormattedName())?.let {
+            DirUtil.getTempFile(filePath.getFormattedName())?.let {
                 downloadedFilePath = it.path
 
                 if (downloadedFilePath.isAvailableLocally(smbFileSize)) {
@@ -56,11 +62,11 @@ class FileRepository constructor(private val ioDispatcher: CoroutineDispatcher =
                     return@flow
                 }
 
-                val diskShare = SMBAccess.getSmbSession().session.connectShare(shareName) as DiskShare
+                val diskShare = getConnectedDiskShare(shareName)
                 val buffer = ByteArray(SMBAccess.getSmbSession().session.connection.negotiatedProtocol.maxReadSize)
                 val fileOutputStream = FileOutputStream(it)
                 val smbFile2bRead = diskShare.openFile(
-                    smbFilePath.substringAfterLast("/"),
+                    filePath.parseSmbPathFromSharePath(),
                     EnumSet.of(AccessMask.GENERIC_READ),
                     null,
                     setOf(SMB2ShareAccess.FILE_SHARE_READ),
@@ -85,7 +91,7 @@ class FileRepository constructor(private val ioDispatcher: CoroutineDispatcher =
         }.onSuccess {
             emit(DownloadCompleted(downloadedFilePath))
         }.onFailure {
-            Timber.d(TAG, it, it.localizedMessage.orEmpty())
+            errorLogger(it)
             emit(Error)
         }
     }.flowOn(ioDispatcher)
@@ -128,19 +134,36 @@ class FileRepository constructor(private val ioDispatcher: CoroutineDispatcher =
                 }
             }
         }.getOrElse {
-            Timber.d(TAG, it, it.localizedMessage.orEmpty())
+            errorLogger(it)
             emit(Error)
         }
     }.flowOn(ioDispatcher)
 
+    // TODO: move this to SMBAccess when SMBAccess file kotlin-ized
+    private fun getConnectedDiskShare(shareName: String): DiskShare {
+        val parsedShareName = shareName.shareNameFromPath()
+        SMBAccess.getSmbSession()?.currentDiskShare?.let {
+            if (it.isConnected && parsedShareName == it.smbPath.shareName) {
+                return it
+            } else {
+                return@let
+            }
+        }
+
+        return SMBAccess.getSmbSession().apply {
+            currentDiskShare = session.connectShare(parsedShareName) as DiskShare
+        }.currentDiskShare
+    }
+
     fun getFileCursor(shareName: String) = flow<FileState> {
         lateinit var smbFiles: List<FileIdBothDirectoryInformation>
         runCatching {
-            val diskShare = SMBAccess.getSmbSession().session.connectShare(shareName) as DiskShare
-            smbFiles = diskShare.list("").filter { !it.isExcludable() }
+            val smbFilePath = shareName.parseSmbPathFromSharePath()
+            smbFiles = getConnectedDiskShare(shareName).list(smbFilePath).filter { !it.isExcludable() }.sortedBy { it.fileName }
         }.onSuccess {
             emit(CursorState(smbFiles))
         }.onFailure {
+            errorLogger(it)
             emit(Error)
         }
     }.flowOn(ioDispatcher)
@@ -152,6 +175,7 @@ class FileRepository constructor(private val ioDispatcher: CoroutineDispatcher =
         }.onSuccess {
             emit(NetShareInfoState(netShares))
         }.onFailure {
+            errorLogger(it)
             emit(Error)
         }
     }.flowOn(ioDispatcher)

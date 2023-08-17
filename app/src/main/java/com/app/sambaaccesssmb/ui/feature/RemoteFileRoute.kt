@@ -34,15 +34,16 @@ import com.app.sambaaccesssmb.utils.isDirectory
 import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation
 
 @Composable
-internal fun RemoteFileRoute(onNavigateToRemoteFile: () -> Unit, onMediaClick: (String, String, Long) -> Unit, shareName: String, fileViewModel: FilesViewModel) {
-    RemoteFileScreen(onNavigateToRemoteFile, onMediaClick, shareName, fileViewModel)
+internal fun RemoteFileRoute(onNavigateToRemoteFile: () -> Unit, onSmbFileClick: (String, String, Long) -> Unit, onDirectoryClick: (String) -> Unit, shareName: String, fileViewModel: FilesViewModel) {
+    RemoteFileScreen(onNavigateToRemoteFile, onSmbFileClick, onDirectoryClick, shareName, fileViewModel)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun RemoteFileScreen(
     onNavigateToHomeScreen: () -> Unit,
-    onMediaClick: (String, String, Long) -> Unit,
+    onSmbFileClick: (String, String, Long) -> Unit,
+    onDirectoryClick: (String) -> Unit,
     shareName: String,
     filesViewModel: FilesViewModel,
 ) {
@@ -70,7 +71,7 @@ internal fun RemoteFileScreen(
             content = {
                 Column(modifier = Modifier.padding(it)) {
                     when (fileCursorState) {
-                        is FileState.CursorState -> SmbItemGrid(fileCursorState.smbItems, shareName, onMediaClick)
+                        is FileState.CursorState -> SmbItemGrid(fileCursorState.smbItems, shareName, onSmbFileClick, onDirectoryClick)
                         is FileState.Error,
                         is FileState.Loading,
                         -> Waiting(fileCursorState)
@@ -87,15 +88,15 @@ internal fun RemoteFileScreen(
 }
 
 @Composable
-internal fun SmbItemGrid(smbItems: List<FileIdBothDirectoryInformation>, shareName: String, onMediaClick: (String, String, Long) -> Unit) {
+internal fun SmbItemGrid(smbItems: List<FileIdBothDirectoryInformation>, shareName: String, onSmbFileClick: (String, String, Long) -> Unit, onDirectoryClick: (String) -> Unit) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(120.dp),
         contentPadding = PaddingValues(1.dp),
     ) {
         items(smbItems) { item ->
             when (item.isDirectory()) {
-                true -> DirectoryPlate(smbItem = item)
-                else -> FilePlate(smbItem = item, shareName, onMediaClick)
+                true -> DirectoryPlate(smbItem = item, shareName, onDirectoryClick)
+                else -> FilePlate(smbItem = item, shareName, onSmbFileClick)
             }
         }
     }

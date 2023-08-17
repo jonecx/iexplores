@@ -1,5 +1,6 @@
 package com.app.sambaaccesssmb.ui.feature.navigation
 
+import android.net.Uri
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -10,23 +11,24 @@ import com.app.sambaaccesssmb.ui.feature.fvm.FilesViewModel
 const val remoteFileScreenRoute = "remoteFileScreenRoute/{shareName}"
 
 fun NavController.navigateToRemoteFileScreen(shareName: String) {
+    val encodedShareName = Uri.encode(shareName)
     this.navigate(
-        "remoteFileScreenRoute/$shareName",
+        "remoteFileScreenRoute/$encodedShareName",
         NavOptions.Builder()
-            .setPopUpTo(remoteFileScreenRoute, inclusive = true)
             .build(),
     )
 }
 
 fun NavGraphBuilder.remoteFileScreen(
     onNavigateToHomeScreen: () -> Unit,
-    onMediaClick: (String, String, Long) -> Unit,
+    onSmbFileClick: (String, String, Long) -> Unit,
+    onDirectoryClick: (String) -> Unit,
     nestedGraphs: NavGraphBuilder.() -> Unit,
     fileViewModel: FilesViewModel,
 ) {
     composable(route = remoteFileScreenRoute) {
         val shareName = it.arguments?.getString("shareName").orEmpty()
-        RemoteFileRoute(onNavigateToHomeScreen, onMediaClick, shareName, fileViewModel)
+        RemoteFileRoute(onNavigateToHomeScreen, onSmbFileClick, onDirectoryClick, shareName, fileViewModel)
     }
     nestedGraphs()
 }

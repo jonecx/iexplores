@@ -1,6 +1,5 @@
 package com.app.sambaaccesssmb.ui.feature.compose
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation
 
 @Composable
-internal fun DirectoryPlate(smbItem: FileIdBothDirectoryInformation) {
+internal fun DirectoryPlate(smbItem: FileIdBothDirectoryInformation, shareName: String, onDirectoryClick: (String) -> Unit) {
     val context = LocalContext.current
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
@@ -34,11 +33,7 @@ internal fun DirectoryPlate(smbItem: FileIdBothDirectoryInformation) {
             .padding(2.dp)
             .clip(RoundedCornerShape(4.dp))
             .background(MaterialTheme.colorScheme.surfaceVariant)
-            .clickable {
-                Toast
-                    .makeText(context, smbItem.fileName, Toast.LENGTH_SHORT)
-                    .show()
-            },
+            .clickable { onDirectoryClick("$shareName/${smbItem.fileName}") },
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             Text(
