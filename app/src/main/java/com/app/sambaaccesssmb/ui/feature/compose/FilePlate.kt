@@ -19,9 +19,10 @@ internal fun FilePlate(smbItem: FileIdBothDirectoryInformation, shareName: Strin
             .padding(2.dp)
             .clickable { onSmbFileClick(shareName, smbItem.fileName, smbItem.endOfFile) },
     ) {
+        val smbFilePath = "$shareName/${smbItem.fileName}"
         when {
-            smbItem.isImage() -> ImagePlate(smbItem = smbItem)
-            smbItem.isVideo() -> VideoPlate(smbItem)
+            smbItem.isImage() -> ImagePlate(smbFilePath)
+//            smbItem.isVideo() -> VideoPlate(smbItem)
             else -> OtherPlate(smbItem)
         }
     }

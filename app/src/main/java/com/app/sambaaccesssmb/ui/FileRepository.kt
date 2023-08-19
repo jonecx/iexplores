@@ -34,6 +34,8 @@ import java.io.FileOutputStream
 import java.util.EnumSet
 import javax.inject.Singleton
 
+data class SmbPath(val string: String = "")
+
 @Singleton
 class FileRepository constructor(private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO) {
 

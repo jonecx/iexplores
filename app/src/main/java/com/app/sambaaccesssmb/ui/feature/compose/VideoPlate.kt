@@ -21,7 +21,7 @@ internal fun VideoPlate(smbItem: FileIdBothDirectoryInformation) {
             .background(MaterialTheme.colorScheme.surfaceVariant)
             .fillMaxSize(),
     ) {
-        ImagePlate(smbItem = smbItem)
+//        ImagePlate(smbItem = smbItem)
         Icon(
             Filled.PlayCircle,
             contentDescription = null,
