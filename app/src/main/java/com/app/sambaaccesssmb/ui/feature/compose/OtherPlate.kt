@@ -18,30 +18,28 @@ import com.app.sambaaccesssmb.ui.feature.fvm.Locus
 
 @Composable
 internal fun OtherPlate(fileItem: Locus) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(4.dp)
+    ) {
         Text(
-            modifier = Modifier
-                .padding(4.dp),
             text = fileItem.originalFile.name,
             style = MaterialTheme.typography.titleSmall,
             maxLines = 4,
             overflow = TextOverflow.Ellipsis,
         )
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
+        Text(
             modifier = Modifier
-                .size(25.dp)
                 .background(MaterialTheme.colorScheme.secondary)
-                .align(Alignment.TopEnd),
-        ) {
-            Text(
-                color = MaterialTheme.colorScheme.scrim,
-                text = fileItem.originalFile.name.substringAfter("."),
-                style = MaterialTheme.typography.labelSmall,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
+                .align(Alignment.TopEnd)
+                .padding(2.dp),
+            color = MaterialTheme.colorScheme.scrim,
+            text = fileItem.originalFile.name.substringAfter("."),
+            style = MaterialTheme.typography.labelSmall,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }
+
