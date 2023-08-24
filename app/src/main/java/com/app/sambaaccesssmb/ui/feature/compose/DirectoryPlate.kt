@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,8 +28,7 @@ import com.app.sambaaccesssmb.ui.feature.fvm.Locus
 @Composable
 internal fun DirectoryPlate(directoryItem: Locus) {
     val context = LocalContext.current
-    Column(
-        verticalArrangement = Arrangement.SpaceBetween,
+    Box(
         modifier = Modifier
             .size(120.dp)
             .padding(2.dp)
@@ -40,23 +40,23 @@ internal fun DirectoryPlate(directoryItem: Locus) {
                     .show()
             },
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Text(
-                modifier = Modifier
-                    .padding(4.dp),
-                text = directoryItem.fileName,
-                style = MaterialTheme.typography.titleSmall,
-                maxLines = 4,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Icon(
-                Filled.Folder,
-                contentDescription = "",
-                tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .size(25.dp),
-            )
-        }
+        Text(
+            modifier = Modifier
+                .padding(2.dp)
+                .fillMaxWidth(),
+            text = directoryItem.fileName,
+            style = MaterialTheme.typography.titleSmall,
+            maxLines = 4,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Icon(
+            Filled.Folder,
+            contentDescription = "",
+            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .size(25.dp),
+        )
     }
 }
+
