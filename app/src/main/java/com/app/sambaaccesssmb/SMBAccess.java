@@ -2,6 +2,9 @@ package com.app.sambaaccesssmb;
 
 import android.app.Application;
 import com.app.sambaaccesssmb.connection.SMBConnection;
+
+import org.bytedeco.javacpp.Loader;
+
 import dagger.hilt.android.HiltAndroidApp;
 import java.util.Properties;
 import jcifs.CIFSContext;

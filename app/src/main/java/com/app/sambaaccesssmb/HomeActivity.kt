@@ -9,6 +9,8 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import com.app.sambaaccesssmb.ui.SmbApp
 import dagger.hilt.android.AndroidEntryPoint
+import org.bytedeco.ffmpeg.ffmpeg
+import org.bytedeco.javacpp.Loader
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @AndroidEntryPoint
@@ -23,5 +25,7 @@ class HomeActivity : ComponentActivity() {
         setContent {
             SmbApp(calculateWindowSizeClass(activity = this))
         }
+
+        Loader.load(org.bytedeco.ffmpeg.ffmpeg::class.java)
     }
 }

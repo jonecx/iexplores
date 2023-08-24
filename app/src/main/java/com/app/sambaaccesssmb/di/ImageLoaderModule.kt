@@ -2,11 +2,14 @@ package com.app.sambaaccesssmb.di
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.media.ThumbnailUtils
 import android.net.Uri
 import android.os.Build.VERSION_CODES.P
 import android.util.Size
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmapOrNull
 import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
 import coil.decode.ContentMetadata
@@ -22,6 +25,7 @@ import coil.fetch.FetchResult
 import coil.fetch.Fetcher
 import coil.fetch.SourceResult
 import coil.request.Options
+import com.app.sambaaccesssmb.R
 import com.app.sambaaccesssmb.utils.Build
 import com.app.sambaaccesssmb.utils.DirUtil
 import com.app.sambaaccesssmb.utils.getFormattedName
@@ -33,10 +37,19 @@ import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import jcifs.smb.SmbFile
 import kotlinx.coroutines.Dispatchers
+import okhttp3.internal.closeQuietly
 import okio.buffer
 import okio.source
+import org.bytedeco.ffmpeg.global.avutil.AV_PIX_FMT_ARGB
+import org.bytedeco.ffmpeg.global.avutil.AV_PIX_FMT_RGBA
+import org.bytedeco.javacv.AndroidFrameConverter
+import org.bytedeco.javacv.FFmpegFrameGrabber
+import org.bytedeco.javacv.Frame
+import org.bytedeco.javacv.FrameGrabber
+import timber.log.Timber
 import java.io.FileOutputStream
 import java.io.InputStream
+import java.lang.Exception
 
 @Module
 @InstallIn(ActivityComponent::class)
@@ -75,7 +88,45 @@ class SmbFileFetcher(
 
         val tempFileName = data.getFormattedName()
         return if (data.isVideo()) {
-            val thumbnailBitmap = getThumbnail(tempFileName, inputStream)
+/*            try {
+                val frameGrabber = FFmpegFrameGrabber(inputStream)
+                frameGrabber.pixelFormat = AV_PIX_FMT_RGBA
+                frameGrabber.start()
+                val frame = frameGrabber.grabFrame()
+                val xy = AndroidFrameConverter()
+                val x = xy.convert(frame)
+                print(x)
+            } catch (e: Exception) {
+                print(e.stackTrace)
+            }*/
+
+//            val thumbnailBitmap = getThumbnail(tempFileName, inputStream)
+            val thumbnailBitmap = try {
+                val frameGrabber = FFmpegFrameGrabber(inputStream)
+//                frameGrabber.pixelFormat = AV_PIX_FMT_ARGB
+                frameGrabber.frameNumber = 0
+                frameGrabber.setOption("stimeout", "60000000")
+                frameGrabber.start()
+                var image: Frame? = null
+                var counter = 0
+                while(image == null) {
+                    counter++
+                    image = frameGrabber.grabImage()
+                    Timber.d("Jonecx $counter")
+                }
+                val xy = AndroidFrameConverter()
+                val x = xy.convert(image)
+                frameGrabber.stop()
+                x ?: ContextCompat.getDrawable(options.context, R.drawable.ic_file)!!.toBitmapOrNull()
+            } catch (e: Exception) {
+                print(e.stackTrace)
+//                getThumbnail(tempFileName, inputStream)
+                ContextCompat.getDrawable(options.context, R.drawable.ic_folder)!!.toBitmapOrNull()
+            } finally {
+                inputStream.closeQuietly()
+            }
+
+
             return DrawableResult(
                 drawable = BitmapDrawable(options.context.resources, thumbnailBitmap),
                 isSampled = false,
