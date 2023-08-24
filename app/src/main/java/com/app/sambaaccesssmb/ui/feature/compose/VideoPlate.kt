@@ -3,9 +3,12 @@ package com.app.sambaaccesssmb.ui.feature.compose
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons.Filled
 import androidx.compose.material.icons.filled.PlayCircle
+import androidx.compose.material.icons.filled.PlayCircleOutline
+import androidx.compose.material.icons.filled.SmartDisplay
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -22,12 +25,14 @@ internal fun VideoPlate(fileItem: Locus) {
             .fillMaxSize(),
     ) {
         ImagePlate(fileItem = fileItem)
+
         Icon(
             Filled.PlayCircle,
             contentDescription = null,
             modifier = Modifier
-                .align(Alignment.Center)
-                .size(48.dp),
+                .align(Alignment.TopEnd)
+                .size(30.dp),
         )
     }
 }
+
