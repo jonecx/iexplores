@@ -2,6 +2,7 @@ package com.app.sambaaccesssmb.ui.feature.compose
 
 import android.widget.Toast
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -17,14 +18,14 @@ import jcifs.smb.SmbFile
 @Composable
 internal fun FilePlate(fileItem: Locus, onMediaClick: (SmbFile) -> Unit) {
     val context = LocalContext.current
-    Column(
+    Box(
         modifier = Modifier
             .size(120.dp)
             .padding(2.dp)
             .clickable {
-                       Toast.makeText(context, fileItem.fileName, Toast.LENGTH_SHORT).show()
-//                onMediaClick(fileItem.originalFile)
-                       },
+                Toast.makeText(context, fileItem.fileName, Toast.LENGTH_SHORT).show()
+                // onMediaClick(fileItem.originalFile)
+            }
     ) {
         when {
             fileItem.originalFile.isImage() -> ImagePlate(fileItem = fileItem)
@@ -33,3 +34,4 @@ internal fun FilePlate(fileItem: Locus, onMediaClick: (SmbFile) -> Unit) {
         }
     }
 }
+
