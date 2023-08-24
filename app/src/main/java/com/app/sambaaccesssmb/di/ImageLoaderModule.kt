@@ -104,8 +104,10 @@ class SmbFileFetcher(
             val thumbnailBitmap = try {
                 val frameGrabber = FFmpegFrameGrabber(inputStream)
 //                frameGrabber.pixelFormat = AV_PIX_FMT_ARGB
-                frameGrabber.frameNumber = 0
+                frameGrabber.frameNumber = 1
                 frameGrabber.setOption("stimeout", "60000000")
+                frameGrabber.setOption("hwaccel", "cuvid")
+                frameGrabber.setOption("hwaccel", "h264_videotoolbox")
                 frameGrabber.start()
                 var image: Frame? = null
                 var counter = 0
