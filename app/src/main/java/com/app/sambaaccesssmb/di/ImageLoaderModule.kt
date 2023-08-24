@@ -108,6 +108,7 @@ class SmbFileFetcher(
                 frameGrabber.setOption("stimeout", "60000000")
                 frameGrabber.setOption("hwaccel", "cuvid")
                 frameGrabber.setOption("hwaccel", "h264_videotoolbox")
+                frameGrabber.setOption("threads", "12")
                 frameGrabber.start()
                 var image: Frame? = null
                 var counter = 0
