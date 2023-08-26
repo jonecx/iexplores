@@ -4,10 +4,13 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
+import android.media.MediaMetadataRetriever
 import android.media.ThumbnailUtils
 import android.net.Uri
 import android.os.Build.VERSION_CODES.P
+import android.text.format.DateUtils
 import android.util.Size
+import android.util.TimeUtils
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmapOrNull
 import coil.ImageLoader
@@ -101,6 +104,7 @@ class SmbFileFetcher(
             }*/
 
 //            val thumbnailBitmap = getThumbnail(tempFileName, inputStream)
+            val k: Long = System.currentTimeMillis()
             val thumbnailBitmap = try {
                 val frameGrabber = FFmpegFrameGrabber(inputStream)
 //                frameGrabber.pixelFormat = AV_PIX_FMT_ARGB
@@ -108,7 +112,7 @@ class SmbFileFetcher(
                 frameGrabber.setOption("stimeout", "60000000")
                 frameGrabber.setOption("hwaccel", "cuvid")
                 frameGrabber.setOption("hwaccel", "h264_videotoolbox")
-                frameGrabber.setOption("threads", "12")
+                frameGrabber.setOption("threads", "5")
                 frameGrabber.start()
                 var image: Frame? = null
                 var counter = 0
@@ -120,6 +124,8 @@ class SmbFileFetcher(
                 val xy = AndroidFrameConverter()
                 val x = xy.convert(image)
                 frameGrabber.stop()
+                val y = Math.subtractExact(System.currentTimeMillis(), k)
+                Timber.d("Jonecx ${DateUtils.formatElapsedTime(System.currentTimeMillis() - k)}")
                 x ?: ContextCompat.getDrawable(options.context, R.drawable.ic_file)!!.toBitmapOrNull()
             } catch (e: Exception) {
                 print(e.stackTrace)
