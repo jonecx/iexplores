@@ -4,10 +4,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridCells.Adaptive
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.Icons.Filled
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -23,42 +23,37 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.app.sambaaccesssmb.R
+import com.app.sambaaccesssmb.R.string
 import com.app.sambaaccesssmb.SMBAccess
-import com.app.sambaaccesssmb.ui.feature.compose.DirectoryPlate
-import com.app.sambaaccesssmb.ui.feature.compose.FilePlate
+import com.app.sambaaccesssmb.ui.feature.compose.NetSharePlate
 import com.app.sambaaccesssmb.ui.feature.compose.Waiting
-import com.app.sambaaccesssmb.ui.feature.fvm.FileState
+import com.app.sambaaccesssmb.ui.feature.fvm.FileState.Error
+import com.app.sambaaccesssmb.ui.feature.fvm.FileState.Loading
+import com.app.sambaaccesssmb.ui.feature.fvm.FileState.NetShareInfoState
 import com.app.sambaaccesssmb.ui.feature.fvm.FilesViewModel
-import com.app.sambaaccesssmb.utils.isDirectory
-import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation
+import com.rapid7.client.dcerpc.mssrvs.dto.NetShareInfo1
 
 @Composable
-internal fun RemoteFileRoute(onNavigateToRemoteFile: () -> Unit, onSmbFileClick: (String, String, Long) -> Unit, onDirectoryClick: (String) -> Unit, shareName: String, fileViewModel: FilesViewModel) {
-    RemoteFileScreen(onNavigateToRemoteFile, onSmbFileClick, onDirectoryClick, shareName, fileViewModel)
+internal fun NetShareRoute(onNavigateToHomeScreen: () -> Unit, onShareClick: (String) -> Unit, fileViewModel: FilesViewModel) {
+    NetShareScreen(onNavigateToHomeScreen, onShareClick, fileViewModel)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun RemoteFileScreen(
+internal fun NetShareScreen(
     onNavigateToHomeScreen: () -> Unit,
-    onSmbFileClick: (String, String, Long) -> Unit,
-    onDirectoryClick: (String) -> Unit,
-    shareName: String,
+    onShareClick: (String) -> Unit,
     filesViewModel: FilesViewModel,
 ) {
     if (SMBAccess.getSmbSession()?.isConnected == true) {
-        LaunchedEffect(Unit) {
-            filesViewModel.getFileCursor(shareName)
-        }
-        val fileCursorState = filesViewModel.fileCursorState.collectAsStateWithLifecycle().value
+        val netShareState = filesViewModel.netShareState.collectAsStateWithLifecycle().value
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text(stringResource(id = R.string.app_name_rebrand)) },
+                    title = { Text(stringResource(id = string.app_name_rebrand)) },
                     navigationIcon = {
                         IconButton(onClick = { }) {
-                            Icon(imageVector = Icons.Filled.Menu, contentDescription = stringResource(id = R.string.back_button))
+                            Icon(imageVector = Filled.Menu, contentDescription = stringResource(id = string.back_button))
                         }
                     },
                     windowInsets = WindowInsets(
@@ -70,12 +65,12 @@ internal fun RemoteFileScreen(
             },
             content = {
                 Column(modifier = Modifier.padding(it)) {
-                    when (fileCursorState) {
-                        is FileState.CursorState -> SmbItemGrid(fileCursorState.smbItems, shareName, onSmbFileClick, onDirectoryClick)
-                        is FileState.Error,
-                        is FileState.Loading,
-                        -> Waiting(fileCursorState)
-                        else -> Waiting(fileCursorState)
+                    when (netShareState) {
+                        is Error,
+                        is Loading,
+                        -> Waiting(netShareState)
+                        is NetShareInfoState -> NetShareGrid(netShareState.netShares, onShareClick)
+                        else -> Waiting(netShareState)
                     }
                 }
             },
@@ -88,16 +83,13 @@ internal fun RemoteFileScreen(
 }
 
 @Composable
-internal fun SmbItemGrid(smbItems: List<FileIdBothDirectoryInformation>, shareName: String, onSmbFileClick: (String, String, Long) -> Unit, onDirectoryClick: (String) -> Unit) {
+internal fun NetShareGrid(netShareItems: List<NetShareInfo1>, onShareClick: (String) -> Unit) {
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(120.dp),
+        columns = Adaptive(120.dp),
         contentPadding = PaddingValues(1.dp),
     ) {
-        items(smbItems) { item ->
-            when (item.isDirectory()) {
-                true -> DirectoryPlate(smbItem = item, shareName, onDirectoryClick)
-                else -> FilePlate(smbItem = item, shareName, onSmbFileClick)
-            }
+        items(netShareItems) { item ->
+            NetSharePlate(netShare = item, onShareClick)
         }
     }
 }

@@ -7,5 +7,5 @@ import javax.inject.Inject
 class FileDownloadUseCase @Inject constructor(
     private val fileRepository: FileRepository,
 ) {
-    suspend operator fun invoke(smbFilePath: String): Flow<FileState> = fileRepository.downloadFile(smbFilePath)
+    suspend operator fun invoke(shareName: String, smbFilePath: String, smbFileSize: Long): Flow<FileState> = fileRepository.getSmbFile(shareName, smbFilePath, smbFileSize)
 }

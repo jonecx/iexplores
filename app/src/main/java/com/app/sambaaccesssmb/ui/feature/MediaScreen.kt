@@ -20,29 +20,29 @@ import com.app.sambaaccesssmb.ui.feature.fvm.FileState.DownloadCompleted
 import com.app.sambaaccesssmb.ui.feature.fvm.FileState.Downloading
 import com.app.sambaaccesssmb.ui.feature.fvm.FileState.Error
 import com.app.sambaaccesssmb.ui.feature.fvm.FileState.Loading
-import com.app.sambaaccesssmb.ui.feature.fvm.FileState.Success
 import com.app.sambaaccesssmb.ui.feature.fvm.FilesViewModel
-import jcifs.smb.SmbFile
 
 @Composable
 internal fun MediaRoute(
     onBackClick: () -> Unit,
-    onMediaClick: (SmbFile) -> Unit,
-    mediaUrl: String,
+    shareName: String,
+    smbFilePath: String,
+    smbFileSize: Long,
     fileViewModel: FilesViewModel,
 ) {
-    MediaScreen(onBackClick = onBackClick, onMediaClick = onMediaClick, mediaUrl, fileViewModel)
+    MediaScreen(onBackClick = onBackClick, shareName, smbFilePath, smbFileSize, fileViewModel)
 }
 
 @Composable
 internal fun MediaScreen(
     onBackClick: () -> Unit,
-    onMediaClick: (SmbFile) -> Unit,
-    mediaUrl: String,
+    shareName: String,
+    smbFilePath: String,
+    smbFileSize: Long,
     filesViewModel: FilesViewModel,
 ) {
     LaunchedEffect(Unit) {
-        filesViewModel.downloadFile(mediaUrl)
+        filesViewModel.getSmbFile(shareName, smbFilePath, smbFileSize)
     }
 
     val displaySmbFileState = filesViewModel.fileDownloadState.collectAsState().value
@@ -67,9 +67,10 @@ internal fun MediaScreen(
                 is DownloadCompleted -> {
                     ZoomableImagePlate(mediaUrl = displaySmbFileState.filePath)
                 }
-                is Success,
-                is Error,
-                -> {
+                is Error -> {
+                    LabelLargeText(text = stringResource(id = R.string.unknown_error))
+                }
+                else -> {
                     LabelLargeText(text = stringResource(id = R.string.unknown_error))
                 }
             }

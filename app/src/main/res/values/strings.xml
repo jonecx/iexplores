@@ -25,4 +25,10 @@
     <string name="back_button">back button</string>
     <string name="app_name_rebrand">iExplore</string>
     <string name="loading_data">One moment, please&#8230;"</string>
+
+    <string name="type_drive_or_directory">Disk Drive or Directory</string>
+    <string name="type_printer_queue">Print Queue</string>
+    <string name="type_device">Device</string>
+    <string name="type_ipc">Interprocess Communication (IPC)</string>
+    <string name="type_share_unknown">Unknown Share Type</string>
 </resources>

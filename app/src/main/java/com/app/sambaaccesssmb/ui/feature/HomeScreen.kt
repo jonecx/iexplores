@@ -6,6 +6,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.app.sambaaccesssmb.SMBAccess
+import com.app.sambaaccesssmb.model.SmbSession
 import com.app.sambaaccesssmb.ui.LoginViewModel
 import com.app.sambaaccesssmb.ui.LoginViewModel.LoginState.Error
 import com.app.sambaaccesssmb.ui.LoginViewModel.LoginState.Initial
@@ -13,7 +14,6 @@ import com.app.sambaaccesssmb.ui.LoginViewModel.LoginState.Loading
 import com.app.sambaaccesssmb.ui.LoginViewModel.LoginState.LoginInputValidationSuccessful
 import com.app.sambaaccesssmb.ui.LoginViewModel.LoginState.Success
 import com.app.sambaaccesssmb.ui.LoginViewModel.LoginState.ValidatingLoginInput
-import jcifs.smb.SmbFile
 
 @Composable
 internal fun HomeRoute(
@@ -31,7 +31,7 @@ internal fun HomeRoute(
         Initial -> EnterCredentialScreen(loginViewModel::doLogin)
         is Error -> EnterCredentialScreen(loginViewModel::doLogin, loginState.value)
         is Success -> LaunchedEffect(loginState.value) {
-            setupSmbConnection((loginState.value as Success).smbFile)
+            setSmbSession((loginState.value as Success).smbSession)
             onNavigateToRemoteFile.invoke()
         }
     }
@@ -41,10 +41,6 @@ internal fun HomeRoute(
     }
 }
 
-private fun setupSmbConnection(rootSmb: SmbFile) {
-    SMBAccess.getSmbConnectionInstance().apply {
-        rootSMBFile = rootSmb
-        smbContext = rootSMBFile.context
-        isConnected(rootSmb.exists())
-    }
+private fun setSmbSession(smbSession: SmbSession) {
+    SMBAccess.setSmbSession(smbSession)
 }

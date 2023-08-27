@@ -14,15 +14,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.app.sambaaccesssmb.ui.feature.fvm.Locus
+import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation
 
 @Composable
-internal fun OtherPlate(fileItem: Locus) {
+internal fun OtherPlate(smbItem: FileIdBothDirectoryInformation) {
     Box(modifier = Modifier.fillMaxSize()) {
         Text(
             modifier = Modifier
                 .padding(4.dp),
-            text = fileItem.originalFile.name,
+            text = smbItem.fileName,
             style = MaterialTheme.typography.titleSmall,
             maxLines = 4,
             overflow = TextOverflow.Ellipsis,
@@ -32,12 +32,12 @@ internal fun OtherPlate(fileItem: Locus) {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .size(25.dp)
-                .background(MaterialTheme.colorScheme.secondary)
+                .background(MaterialTheme.colorScheme.onPrimaryContainer)
                 .align(Alignment.TopEnd),
         ) {
             Text(
-                color = MaterialTheme.colorScheme.scrim,
-                text = fileItem.originalFile.name.substringAfter("."),
+                color = MaterialTheme.colorScheme.surfaceVariant,
+                text = smbItem.fileName.substringAfter(".").lowercase(),
                 style = MaterialTheme.typography.labelSmall,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
