@@ -1,6 +1,5 @@
 package com.app.sambaaccesssmb.ui.feature.compose
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,14 +18,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.app.sambaaccesssmb.ui.feature.fvm.Locus
+import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation
 
 @Composable
-internal fun DirectoryPlate(directoryItem: Locus) {
-    val context = LocalContext.current
+internal fun DirectoryPlate(smbItem: FileIdBothDirectoryInformation, shareName: String, onDirectoryClick: (String) -> Unit) {
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
@@ -34,17 +31,13 @@ internal fun DirectoryPlate(directoryItem: Locus) {
             .padding(2.dp)
             .clip(RoundedCornerShape(4.dp))
             .background(MaterialTheme.colorScheme.surfaceVariant)
-            .clickable {
-                Toast
-                    .makeText(context, directoryItem.originalFile.name, Toast.LENGTH_SHORT)
-                    .show()
-            },
+            .clickable { onDirectoryClick("$shareName/${smbItem.fileName}") },
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             Text(
                 modifier = Modifier
                     .padding(4.dp),
-                text = directoryItem.fileName,
+                text = smbItem.fileName,
                 style = MaterialTheme.typography.titleSmall,
                 maxLines = 4,
                 overflow = TextOverflow.Ellipsis,

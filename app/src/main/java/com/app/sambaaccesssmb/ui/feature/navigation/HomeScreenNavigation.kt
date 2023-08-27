@@ -20,9 +20,9 @@ fun NavController.navigateToHomeScreen() {
 
 fun NavGraphBuilder.homeScreen(
     onBackClick: () -> Unit,
-    onNavigateToRemoteFile: () -> Unit,
+    onNavigateToShareScreen: () -> Unit,
 ) {
     composable(route = homeScreenRoute) {
-        HomeRoute(onBackClick, onNavigateToRemoteFile)
+        HomeRoute(onBackClick, onNavigateToShareScreen)
     }
 }
