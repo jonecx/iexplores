@@ -49,6 +49,8 @@ import org.bytedeco.javacv.AndroidFrameConverter
 import org.bytedeco.javacv.FFmpegFrameGrabber
 import org.bytedeco.javacv.Frame
 import org.bytedeco.javacv.FrameGrabber
+import org.bytedeco.javacv.VideoInputFrameGrabber
+import org.opencv.videoio.VideoCapture
 import timber.log.Timber
 import java.io.FileOutputStream
 import java.io.InputStream
@@ -113,6 +115,7 @@ class SmbFileFetcher(
                 frameGrabber.setOption("hwaccel", "cuvid")
                 frameGrabber.setOption("hwaccel", "h264_videotoolbox")
                 frameGrabber.setOption("threads", "5")
+                frameGrabber.setOption("buffer_size", "128000")
                 frameGrabber.start()
                 var image: Frame? = null
                 var counter = 0
